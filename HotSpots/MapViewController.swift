@@ -76,7 +76,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             locationManager.pausesLocationUpdatesAutomatically = false
             
             // Distance filter to update location
-            locationManager.distanceFilter = 8
+            locationManager.distanceFilter = 10
             
             // Begin updating user location
             locationManager.startUpdatingLocation()
@@ -197,12 +197,16 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             self.firstLocationUpdate = false
         }
         
-        self.updateLongAndLat(location!)
+        
+        // If the user is travelling less than 5 mph, update location
+        print("Your speed is \(manager.location?.speed)")
+        if manager.location?.speed <= 3.5 {
+            self.updateLongAndLat(location!)
+        }
     }
     
     // Location cannot be retrieved delegate method
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-        
         //print("Error: \(error.localizedDescription)")
         //print("Internet issue")
     }
@@ -227,7 +231,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         request.setValue(KeychainManager.stringForKey("token")! as String, forHTTPHeaderField: "Authorization")
         
         // Parameters sent to the server
-        let params: [String: AnyObject] = ["longitude": location.coordinate.longitude, "latitude": location.coordinate.latitude]
+        let params: [String: AnyObject] = ["longitude": location.coordinate.longitude, "latitude": location.coordinate.latitude, "userID": KeychainManager.stringForKey("userID")!]
         
         // Turning your data into JSON format and storing in HTTP request body
         do {

@@ -152,7 +152,16 @@ class WelcomeViewController: UIViewController, UIPickerViewDelegate, UITextField
                 let JSONDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSMutableDictionary
                 
                 let token = JSONDictionary!["token"]! as! String
-            
+                let userID = JSONDictionary!["ID"]!
+                
+                print("userID is = \(userID)")
+                
+                if KeychainManager.stringForKey("userID") != nil {
+                    print("userID is not nil")
+                    print("Status code is = \(KeychainManager.delete("userID"))")
+                }
+                
+                KeychainManager.setString(userID.stringValue, forKey: "userID")
                 KeychainManager.setString( "Bearer " + token, forKey: "token")
             } catch {
                 print("catch")

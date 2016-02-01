@@ -19,7 +19,7 @@ let itemClassValueConstants = kSecClassGenericPassword as NSString
 // The account value
 let kSecAttrAccountValue = kSecAttrAccount as NSString
 
-// Keychain accesability 
+// Keychain accessability
 let kSecAttrAccessibleValue = kSecAttrAccessible as NSString
 let thisDeviceOnly = kSecAttrAccessibleAlwaysThisDeviceOnly as NSString
 
@@ -53,6 +53,10 @@ class KeychainManager {
         return keychainItem
     }
     
+    class func delete(key: String) {
+        self.deleteKeychainItem(key: key)
+    }
+    
     private class func saveKeychainItem(key key: String, data: NSString) -> OSStatus {
         
         let dataFromString: NSData = data.dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
@@ -67,11 +71,11 @@ class KeychainManager {
     private class func retrieveKeychainItem(key  key: String) -> NSString? {
         
         
-        let keyChainQuery: NSMutableDictionary = NSMutableDictionary(objects: [itemClassValueConstants, "HotSpots", key, kCFBooleanTrue, oneValue], forKeys: [itemClassKeyConstant, kSecAttrServiceValue, kSecAttrAccountValue, kSecReturnDataValue, kSecMatchLimitValue])
+        let keychainQuery: NSMutableDictionary = NSMutableDictionary(objects: [itemClassValueConstants, "HotSpots", key, kCFBooleanTrue, oneValue], forKeys: [itemClassKeyConstant, kSecAttrServiceValue, kSecAttrAccountValue, kSecReturnDataValue, kSecMatchLimitValue])
         
         var result = NSData()
         
-        let status: OSStatus = withUnsafeMutablePointer(&result) { SecItemCopyMatching(keyChainQuery, UnsafeMutablePointer($0)) }
+        let status: OSStatus = withUnsafeMutablePointer(&result) { SecItemCopyMatching(keychainQuery, UnsafeMutablePointer($0)) }
         
         var contentOfKeychain: NSString?
         
@@ -83,4 +87,15 @@ class KeychainManager {
         
         return contentOfKeychain
     }
+    
+    
+    private class func deleteKeychainItem(key key: String) -> OSStatus {
+        
+        let keychainQuery: NSMutableDictionary =  NSMutableDictionary(objects: [itemClassValueConstants, "HotSpots", key, thisDeviceOnly], forKeys: [itemClassKeyConstant, kSecAttrServiceValue, kSecAttrAccountValue,  kSecAttrAccessibleValue])
+        
+        let statusCode: OSStatus = SecItemDelete(keychainQuery as CFDictionaryRef)
+        
+        return statusCode
+    }
+    
 }
