@@ -27,8 +27,6 @@ class SettingsViewController: UITableViewController {
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
         
-        //self.setSortByOption()
-        //self.setUserDetails()
     }
     
     override func viewWillAppear(animated: Bool) {

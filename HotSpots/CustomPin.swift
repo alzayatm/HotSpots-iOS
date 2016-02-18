@@ -11,14 +11,19 @@ import MapKit
 
 class CustomPin: NSObject, MKAnnotation {
     
-    var title: String? 
+    var title: String?
     var subtitle: String?
     var coordinate: CLLocationCoordinate2D
+    var businessDictionary: [String: AnyObject]?
     
-    init(title: String, subtitle: String, coordinate: CLLocationCoordinate2D) {
+    init(title: String, subtitle: String, coordinate: CLLocationCoordinate2D, businessDictionary: [String: AnyObject]?) {
         self.title = title
         self.subtitle = subtitle
         self.coordinate = coordinate
+        self.businessDictionary = businessDictionary
     }
+    
+    
+    
 }
 
