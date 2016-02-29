@@ -453,9 +453,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             annotationView!.canShowCallout = true
             annotationView!.image = UIImage(named: "Pin")
             
-            // Left call out image
-            let leftCallOutPicture = UIImage(named: "")
-            annotationView?.leftCalloutAccessoryView = UIImageView(image:leftCallOutPicture)
+            // Left call out number of people
+            let leftCallOutLabel = UILabel()
+            leftCallOutLabel.text = "100"
+            annotationView?.leftCalloutAccessoryView = leftCallOutLabel
         
             // Right call out button
             let rightCallOutButton = UIButton(type: UIButtonType.DetailDisclosure)
@@ -492,7 +493,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
       
         // Stop retrieving hotspots if user is not zoomed in
-        if self.mapView.region.span.latitudeDelta > 0.1 && self.mapView.region.span.longitudeDelta > 0.1 && !firstLaunch  {
+        if self.mapView.region.span.latitudeDelta > 0.09 && self.mapView.region.span.longitudeDelta > 0.09 && !firstLaunch  {
            
             if zoomInLabel.frame != animatesToFrame {
                 print("called")
@@ -504,46 +505,20 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             return
         }
         
-        // loop through the annotations, whatever isn't within the confines of the map, remove it
-        //let mapRect = self.mapView.visibleMapRect
-        //let userLoc = mapView.userLocation.location
-        
-        //let NECoord: CLLocationCoordinate2D = self.getCoordinateFromMapRectangle(MKMapRectGetMaxX(mapRect), y: mapRect.origin.y)
-        // Get farthest bottom left coordinate
-        //let SWCoord: CLLocationCoordinate2D = self.getCoordinateFromMapRectangle(mapRect.origin.x, y: MKMapRectGetMaxY(mapRect))
-        
-        /*
-        // Clear older annotations from mapview if the user has totally left the visible portion of the map
-        if !(userLoc?.coordinate.latitude >= SWCoord.latitude && userLoc?.coordinate.latitude <= NECoord.latitude && userLoc?.coordinate.longitude >= SWCoord.longitude && userLoc?.coordinate.longitude <= NECoord.longitude) {
-            print("annotations reset")
-            self.mapView.removeAnnotations(self.annotations)
-            self.annotations.removeAll(keepCapacity: false)
-        }
-
-        
-        for var i = 0; i < self.annotations.count; i++ {
-            
-            if !(self.annotations[i].coordinate.latitude > SWCoord.latitude && self.annotations[i].coordinate.latitude < NECoord.latitude && self.annotations[i].coordinate.longitude > SWCoord.longitude && self.annotations[i].coordinate.longitude < NECoord.longitude) {
-                self.mapView.removeAnnotation(self.annotations[i])
-                self.annotations.removeAtIndex(i)
-            } else {
-                
-            }
-        }
-        */
         // Perform request on a background thread
-        let qos = QOS_CLASS_USER_INTERACTIVE
-        let queue = dispatch_get_global_queue(qos, 0)
+        if self.mapView.region.span.latitudeDelta < 0.09 && self.mapView.region.span.longitudeDelta < 0.09 {
+            let qos = QOS_CLASS_USER_INTERACTIVE
+            let queue = dispatch_get_global_queue(qos, 0)
         
-        dispatch_async(queue) {
-            self.fetchHotSpots()
+            dispatch_async(queue) {
+                self.fetchHotSpots()
             
-            // Main thread to update the UI
-            dispatch_async(dispatch_get_main_queue(), {
-                // update the pins on the main thread
-                self.mapView.addAnnotations(self.annotations)
-                
-            })
+                // Main thread to update the UI
+                dispatch_async(dispatch_get_main_queue(), {
+                    // update the pins on the main thread
+                    self.mapView.addAnnotations(self.annotations)
+                })
+            }
         }
         
     }
@@ -552,8 +527,14 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         if segue.identifier == "Detail View" {
             let point = (sender as? MKAnnotationView)?.annotation as! CustomPin
-            let tableViewController = segue.destinationViewController as! UITableViewController
-            tableViewController.title = (point.title)!
+            let viewController = segue.destinationViewController as! BusinessDetailView
+            viewController.title = (point.title)!
+            viewController.numOfPeople = String(point.businessDictionary!["numOfPeople"]!)
+            viewController.averageAge = String(point.businessDictionary!["averageAge"]!)
+            viewController.numOfFemales = String(point.businessDictionary!["numOfFemales"]!)
+            viewController.numOfMales = String(point.businessDictionary!["numOfMales"]!)
+            viewController.percentFemale = String(point.businessDictionary!["percentFemale"]!)
+            viewController.percentMale = String(point.businessDictionary!["percentMale"]!)
         }
     }
     
@@ -654,38 +635,46 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             }
             
             do {
-                // Things to be returned by the server
-                /* 
-                * Business name
-                * Business address
-                * Latitude
-                * Longitude 
-                * Phone number 
-                * Total number of people 
-                * number of females 
-                * number of males 
-                * Percentage full
-                */
-                // Store JSON data into dictionary
-                //let hotSpots = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSMutableArray
-                //print(hotSpots)
-                /*
-                for var i = 0; i < hotSpots?.count; i++ {
+                
+                //Store JSON data into dictionary
+                let hotSpots = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSMutableDictionary
+           
+                for var i = 0; i < hotSpots?["results"]!.count; i++ {
+            
+                    if !(hotSpots!["results"]![i] is NSNull) {
                     
-                    let name = hotSpots![i]["name"]! as! String
-                    print(name)
-                    let longitude = hotSpots![i]["coordinates"]!!["x"]!! as! CLLocationDegrees
-                    print(longitude)
-                    let latitude = hotSpots![i]["coordinates"]!!["y"]!! as! CLLocationDegrees
-                    print(latitude)
-                    // A dictionary of additional information about the hotspot
-                    //let businessDictionary = [String:String]()
+                        let name = hotSpots!["results"]![i]["business_details"]!!["business_name"]! as! String
+                        let longitude = hotSpots!["results"]![i]["coordinates"]!!["x"]!! as! CLLocationDegrees
+                        let latitude = hotSpots!["results"]![i]["coordinates"]!!["y"]!! as! CLLocationDegrees
+                        
+                        let location = CLLocation(latitude: latitude, longitude: longitude)
+                        
+                        var address = String()
+                        let geoCoder = CLGeocoder()
+                        geoCoder.reverseGeocodeLocation(location, completionHandler: { (placemark, error) -> Void in
+                            if error != nil {
+                                print(error!.localizedDescription)
+                            }
+                            print(placemark!.count)
+                            if placemark!.count > 0 {
+                                print("HERE!!!!!")
+                                //var addressDictionary = placemark![0].addressDictionary!
+                                address = String(placemark![0].name)
+                            }
+                        })
+                     
+                        // A dictionary of additional information about the hotspot
+                        print("ADDRESS =  \(address)")
+                        let businessDictionary: [String: AnyObject] = ["numOfPeople": hotSpots!["results"]![i]["business_details"]!!["num_of_people"]! as! NSNumber, "averageAge": hotSpots!["results"]![i]["business_details"]!!["average_age"]! as! NSNumber,
+                        "numOfFemales": hotSpots!["results"]![i]["business_details"]!!["num_of_females"]! as! NSNumber,
+                        "numOfMales": hotSpots!["results"]![i]["business_details"]!!["num_of_males"]! as! NSNumber,
+                        "percentFemale": hotSpots!["results"]![i]["business_details"]!!["percent_female"]! as! NSNumber,
+                        "percentMale": hotSpots!["results"]![i]["business_details"]!!["percent_male"]! as! NSNumber]
                     
-                    self.annotations.append(CustomPin(title: name, subtitle: "123 crap", coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), businessDictionary: nil))
-
-                    print("number of pins in array \(self.annotations.count)")
+                        self.annotations.append(CustomPin(title: name, subtitle: address, coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), businessDictionary: businessDictionary))
+                    }
                 }
-                */
+            
             } catch {
                print(error)
             }
