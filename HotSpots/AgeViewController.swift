@@ -118,6 +118,52 @@ class AgeViewController: UITableViewController, UITextFieldDelegate, UIPickerVie
     override func viewWillDisappear(animated: Bool) {
         print(self.textField.text!)
         defaults.setInteger(Int(self.textField.text!)!, forKey: "Age")
+        self.updateAgeReq()
     }
     
+    func updateAgeReq() {
+        
+        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let session = NSURLSession(configuration: config)
+        let URL = NSURL(string: "http://localhost:3000/updateage")
+        let request = NSMutableURLRequest(URL: URL!)
+        
+        // Configuring the request
+        request.HTTPMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(KeychainManager.stringForKey("token")! as String, forHTTPHeaderField: "Authorization")
+        
+        
+        // Parameters sent to the server
+        let age = defaults.objectForKey("Age") as! Int
+        print("new age: \(age)")
+        let params: [String: AnyObject] = ["age": age, "userID": KeychainManager.stringForKey("userID")!]
+        
+        // Turning your data into JSON format and storing in HTTP request body
+        do {
+            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(params, options: .PrettyPrinted)
+        } catch {
+            print("Error serializing data with json object")
+        }
+        
+        // Making a request over the network with request
+        // Returns data, response, error objects
+        let task = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+            
+            // Checking HTTP Response in case of error
+            let httpResponse = response as? NSHTTPURLResponse
+            
+            if httpResponse?.statusCode != 200 {
+                print(httpResponse?.statusCode)
+            }
+            
+            // Checking if error is nil
+            if error != nil {
+                print("Localized description error: \(error?.localizedDescription)")
+            }
+        }
+        
+        // Start the session
+        task.resume()
+    }
 }

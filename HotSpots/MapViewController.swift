@@ -25,7 +25,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     var searchResults = [MKMapItem]()
     
     // Filter the search results for
-    var filteredSearchResults = [MKMapItem]()
+    //var filteredSearchResults = [MKMapItem]()
     
     // Table view controller that will manage displaying the results
     var tableViewController = UITableViewController()
@@ -43,7 +43,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     @IBOutlet weak var refreshButton: UIButton!
     
     // Location annotations 
-    var annotations = [CustomPin]()
+    var locationPins = [CustomPin]()
+    
+    // Locations Dictionary 
+    var locationsObjectDictionary: NSMutableDictionary!
     
     // Zoom in label variables
     var firstLaunch = true
@@ -60,29 +63,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         self.tableViewController.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "Cell")
         self.definesPresentationContext = true
-    }
-    
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        /*
-        let businessDictionary: [[String:String]] = [["Street": "1574 onyx dr.", "State": "VA", "City": "Bla bla bla bla bla"],
-        ["Street": "Sesame Street", "State": "WA", "City": "Bla bla bla bla bla"],
-        ["Street": "Downing street", "State": "FL", "City": "Bla bla bla bla bla"],
-        ["Street": "Jesus lane", "State": "KS", "City": "Bla bla bla bla bla"],
-        ["Street": "Downing street", "State": "FL", "City": "Bla bla bla bla bla"],
-        ["Street": "Downing street", "State": "FL", "City": "Bla bla bla bla bla"]]
-        
-         let coordinates: [CLLocationCoordinate2D] = [CLLocationCoordinate2D(latitude: 38.109438, longitude: -77.684032), CLLocationCoordinate2D(latitude: 38.405932, longitude: -77.293043), CLLocationCoordinate2D(latitude: 38.742739, longitude: -77.333333), CLLocationCoordinate2D(latitude: 38.925229, longitude: -77.036133), CLLocationCoordinate2D(latitude: 38.404494, longitude: -77.404392), CLLocationCoordinate2D(latitude: 40.7483, longitude: -73.984911)]
-        
-        
-        for var i = 0; i < coordinates.count; i++ {
-        
-            annotations.append(CustomPin(title: "Pin\(i)", subtitle: "Hello", coordinate: coordinates[i], businessDictionary: businessDictionary[i]))
-        
-        }
-        mapView.addAnnotations(annotations)
-        */
     }
     
     // Configure the map view
@@ -170,7 +150,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     func refreshButtonConfig() {
         
         // Makes the button a circle
-        self.refreshButton.frame = CGRectMake(160, 100, 50, 50)
+        self.refreshButton.frame = CGRectMake(10, 10, 50, 50)
+        
         self.refreshButton.layer.cornerRadius = 0.5 * refreshButton.bounds.size.width
         
         // Changes the tint color to white
@@ -214,8 +195,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     // Delegate method updating user location based on set criteria 
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     
-        print(manager.location?.coordinate.latitude)
-        print(manager.location?.coordinate.longitude)
+        //print(manager.location?.coordinate.latitude)
+        //print(manager.location?.coordinate.longitude)
         // Get last updated location
         let location = locations.last
         
@@ -230,7 +211,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         
         // If the user is travelling less than 5 mph, update location
-        print("Your speed is \(manager.location?.speed)")
+        //print("Your speed is \(manager.location?.speed)")
         if manager.location?.speed <= 3.5 {
             self.updateLongAndLat(location!)
         }
@@ -329,14 +310,15 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     // MARK: - UITableViewDataSource
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        
-        // might have subclass UITableViewCell
-        
+    
         //let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath)
         let cell = UITableViewCell(style: .Subtitle, reuseIdentifier: "Cell")
         
-        cell.textLabel?.text = searchResults[indexPath.row].name
+        //print("Row number: \(indexPath.row)")
+        //print("In row \(self.searchResults[indexPath.row].name)")
+        cell.textLabel?.text = self.searchResults[indexPath.row].name
         
+        //print("In row \(self.streetAddresses[indexPath.row])")
         cell.detailTextLabel?.text = self.streetAddresses[indexPath.row]
         
         return cell
@@ -371,13 +353,14 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     // MARK: - UISearchResultsUpdating
     
     func updateSearchResultsForSearchController(searchController: UISearchController) {
-        self.searchQuery(searchController.searchBar.text!)
-        self.tableViewController.tableView.reloadData()
+        self.searchQuery(searchController.searchBar.text!) {
+            self.tableViewController.tableView.reloadData()
+        }
     }
     
     // MARK: - MKLocalSearch 
     
-    func searchQuery(query: String) {
+    func searchQuery(query: String, completion: () -> Void) {
         
         // request
         let request = MKLocalSearchRequest()
@@ -397,7 +380,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             } else {
                 
                 // Remove values from dictionary and array to populate with new data
-                self.addressDictionary.removeAll(keepCapacity: false)
+                //self.addressDictionary.removeAll(keepCapacity: false)
                 self.streetAddresses.removeAll(keepCapacity: false)
                 
                 // storing data about location in dictionary
@@ -413,22 +396,22 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             
                 // Storing the array of MKMapItems in the array
                 self.searchResults = (response?.mapItems)!
-                print(self.searchResults.count)
+                /*
+                // Debugging code
+                print("Number of search results \(self.searchResults.count)")
+                print("Number of addresses \(self.streetAddresses.count)")
+                
+                for var i = 0; i < self.searchResults.count; i++ {
+                    print(self.searchResults[i].name!)
+                    print(self.streetAddresses[i])
+                    print("")
+                } 
+                */
+                completion()
             }
         }
     }
     
-    // MARK: - UISearchBarDelegate
-    /*
-    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
-        //self.searchQuery(searchBar.text!)
-    }
-    
-    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
-        
-        //self.searchQuery(searchText)
-    }
-    */
     
     func searchBarCancelButtonClicked(searchBar: UISearchBar) {
         searchBar.resignFirstResponder()
@@ -454,9 +437,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             annotationView!.image = UIImage(named: "Pin")
             
             // Left call out number of people
-            let leftCallOutLabel = UILabel()
-            leftCallOutLabel.text = "100"
-            annotationView?.leftCalloutAccessoryView = leftCallOutLabel
+            //let leftCallOutLabel = UILabel()
+            //annotationView?.leftCalloutAccessoryView = leftCallOutLabel
         
             // Right call out button
             let rightCallOutButton = UIButton(type: UIButtonType.DetailDisclosure)
@@ -478,6 +460,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
   
     func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
         
+        //self.locations.removeAll(keepCapacity: false)
+        
         let viewFrameWidth = self.view.frame.width
         let animatesToFrame = CGRect(x: 0, y: 108.2, width: viewFrameWidth, height: 17)
         let originalFrame = CGRect(x: 0, y: 90, width: viewFrameWidth, height: 17)
@@ -496,7 +480,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         if self.mapView.region.span.latitudeDelta > 0.09 && self.mapView.region.span.longitudeDelta > 0.09 && !firstLaunch  {
            
             if zoomInLabel.frame != animatesToFrame {
-                print("called")
                 self.view.insertSubview(zoomInLabel, atIndex: 1)
                 UIView.animateWithDuration(0.2, animations: { () -> Void in
                     self.zoomInLabel.frame = animatesToFrame
@@ -507,35 +490,39 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         // Perform request on a background thread
         if self.mapView.region.span.latitudeDelta < 0.09 && self.mapView.region.span.longitudeDelta < 0.09 {
-            let qos = QOS_CLASS_USER_INTERACTIVE
+            
+            self.mapView.removeAnnotations(locationPins)
+            self.locationPins.removeAll(keepCapacity: false)
+            
+            let qos = DISPATCH_QUEUE_PRIORITY_HIGH
             let queue = dispatch_get_global_queue(qos, 0)
         
             dispatch_async(queue) {
-                self.fetchHotSpots()
-            
-                // Main thread to update the UI
-                dispatch_async(dispatch_get_main_queue(), {
-                    // update the pins on the main thread
-                    self.mapView.addAnnotations(self.annotations)
-                })
+                self.fetchHotSpots() {
+                    self.addLocationInfoToPins()
+
+                    dispatch_sync(dispatch_get_main_queue(), {
+                        //print("Adding: \(self.locationPins.count)")
+                        self.mapView.addAnnotations(self.locationPins)
+                    })
+                }
             }
         }
-        
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
         if segue.identifier == "Detail View" {
-            let point = (sender as? MKAnnotationView)?.annotation as! CustomPin
-            let viewController = segue.destinationViewController as! BusinessDetailView
-            viewController.title = (point.title)!
-            viewController.numOfPeople = String(point.businessDictionary!["numOfPeople"]!)
-            viewController.averageAge = String(point.businessDictionary!["averageAge"]!)
-            viewController.numOfFemales = String(point.businessDictionary!["numOfFemales"]!)
-            viewController.numOfMales = String(point.businessDictionary!["numOfMales"]!)
-            viewController.percentFemale = String(point.businessDictionary!["percentFemale"]!)
-            viewController.percentMale = String(point.businessDictionary!["percentMale"]!)
+            let pin = (sender as? MKAnnotationView)?.annotation as! CustomPin
+            let viewController = segue.destinationViewController as! BusinessDetailViewController
+            viewController.title = (pin.title)!
+            print("Before Segue")
+            print(pin.businessDictionary)
+            viewController.businessDictionary = pin.businessDictionary
+            viewController.longitude = pin.coordinate.longitude
+            viewController.latitude = pin.coordinate.latitude
         }
+    
     }
     
     // MARK: - Navigation bar button presentation functions
@@ -567,7 +554,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         return MKCoordinateForMapPoint(mapPoint)
     }
     
-    func fetchHotSpots() {
+    func fetchHotSpots(completion: () -> Void) {
         
         /* Get the coordinates of the visible portion of the map */
         // Get the visible portion of the mapview 
@@ -576,14 +563,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let NECoord: CLLocationCoordinate2D = self.getCoordinateFromMapRectangle(MKMapRectGetMaxX(mapRect), y: mapRect.origin.y)
         // Get farthest bottom left coordinate
         let SWCoord: CLLocationCoordinate2D = self.getCoordinateFromMapRectangle(mapRect.origin.x, y: MKMapRectGetMaxY(mapRect))
-        /*
-        print("ne long coordinate = \(NECoord.longitude)")
-        print("ne lat coordinate = \(NECoord.latitude)")
-        let bottomLeftPin = CustomPin(title: "bottom left", subtitle: "yeah", coordinate: SWCoord, businessDictionary: nil)
-        let topRightPin = CustomPin(title: "Top right", subtitle: "yeah", coordinate: NECoord, businessDictionary: nil)
-        self.mapView.addAnnotation(bottomLeftPin)
-        self.mapView.addAnnotation(topRightPin)
-        */
+        
         /* Get the prefer search method of the user */
         let defaults = NSUserDefaults.standardUserDefaults()
         let searchPreference = defaults.objectForKey("SortBy")
@@ -635,49 +615,15 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             }
             
             do {
-                
                 //Store JSON data into dictionary
-                let hotSpots = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSMutableDictionary
-           
-                for var i = 0; i < hotSpots?["results"]!.count; i++ {
-            
-                    if !(hotSpots!["results"]![i] is NSNull) {
-                    
-                        let name = hotSpots!["results"]![i]["business_details"]!!["business_name"]! as! String
-                        let longitude = hotSpots!["results"]![i]["coordinates"]!!["x"]!! as! CLLocationDegrees
-                        let latitude = hotSpots!["results"]![i]["coordinates"]!!["y"]!! as! CLLocationDegrees
-                        
-                        let location = CLLocation(latitude: latitude, longitude: longitude)
-                        
-                        var address = String()
-                        let geoCoder = CLGeocoder()
-                        geoCoder.reverseGeocodeLocation(location, completionHandler: { (placemark, error) -> Void in
-                            if error != nil {
-                                print(error!.localizedDescription)
-                            }
-                            print(placemark!.count)
-                            if placemark!.count > 0 {
-                                print("HERE!!!!!")
-                                //var addressDictionary = placemark![0].addressDictionary!
-                                address = String(placemark![0].name)
-                            }
-                        })
-                     
-                        // A dictionary of additional information about the hotspot
-                        print("ADDRESS =  \(address)")
-                        let businessDictionary: [String: AnyObject] = ["numOfPeople": hotSpots!["results"]![i]["business_details"]!!["num_of_people"]! as! NSNumber, "averageAge": hotSpots!["results"]![i]["business_details"]!!["average_age"]! as! NSNumber,
-                        "numOfFemales": hotSpots!["results"]![i]["business_details"]!!["num_of_females"]! as! NSNumber,
-                        "numOfMales": hotSpots!["results"]![i]["business_details"]!!["num_of_males"]! as! NSNumber,
-                        "percentFemale": hotSpots!["results"]![i]["business_details"]!!["percent_female"]! as! NSNumber,
-                        "percentMale": hotSpots!["results"]![i]["business_details"]!!["percent_male"]! as! NSNumber]
-                    
-                        self.annotations.append(CustomPin(title: name, subtitle: address, coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), businessDictionary: businessDictionary))
-                    }
-                }
-            
+                self.locationsObjectDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSMutableDictionary
+                //print("HERE 1")
+                print(self.locationsObjectDictionary)
+                
             } catch {
                print(error)
             }
+            completion()
         }
         
         // Start the session
@@ -688,37 +634,67 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     @IBAction func refreshHotSpots(sender: AnyObject) {
         
         // Stop retrieving hotspots if user is not zoomed in
-        if self.mapView.region.span.latitudeDelta > 0.1 && self.mapView.region.span.longitudeDelta > 0.1 { return }
+        if self.mapView.region.span.latitudeDelta > 0.09 && self.mapView.region.span.longitudeDelta > 0.09 { return }
         
         // Clear older annotations from mapview
-        self.mapView.removeAnnotations(self.annotations)
-        self.annotations.removeAll()
+        self.mapView.removeAnnotations(locationPins)
+        self.locationPins.removeAll(keepCapacity: false)
         
         // Perform request on a background thread
-        let qos = QOS_CLASS_USER_INTERACTIVE
+     
+        let qos = DISPATCH_QUEUE_PRIORITY_HIGH
         let queue = dispatch_get_global_queue(qos, 0)
         
         dispatch_async(queue) {
-            self.fetchHotSpots()
-            
-            // Main thread to update the UI 
-            dispatch_async(dispatch_get_main_queue(), {
-                // update the pins on the main thread
-                self.mapView.addAnnotations(self.annotations)
+            self.fetchHotSpots() {
+                self.addLocationInfoToPins()
                 
-            })
+                dispatch_async(dispatch_get_main_queue(), {
+        
+                    self.mapView.addAnnotations(self.locationPins)
+                    
+                })
+            }
+        }
+    }
+    
+    
+    func addLocationInfoToPins() {
+        for var i = 0; i < self.locationsObjectDictionary?["results"]!.count; i++ {
+            
+            if !(self.locationsObjectDictionary!["results"]![i] is NSNull) {
+                
+                // Retrieve all info from business
+                let name = self.locationsObjectDictionary!["results"]![i]["business_details"]!!["business_name"]! as! String
+                let address = self.locationsObjectDictionary!["results"]![i]["business_details"]!!["business_address"] as! String
+                let longitude = self.locationsObjectDictionary!["results"]![i]["coordinates"]!!["x"]!! as! CLLocationDegrees
+                let latitude = self.locationsObjectDictionary!["results"]![i]["coordinates"]!!["y"]!! as! CLLocationDegrees
+                
+                let businessDictionary: [String: AnyObject] = ["numOfPeople": self.locationsObjectDictionary!["results"]![i]["business_details"]!!["num_of_people"]! as! NSNumber, "averageAge": self.locationsObjectDictionary!["results"]![i]["business_details"]!!["average_age"]! as! NSNumber,
+                    "numOfFemales": self.locationsObjectDictionary!["results"]![i]["business_details"]!!["num_of_females"]! as! NSNumber,
+                    "numOfMales": self.locationsObjectDictionary!["results"]![i]["business_details"]!!["num_of_males"]! as! NSNumber,
+                    "percentFemale": self.locationsObjectDictionary!["results"]![i]["business_details"]!!["percent_female"]! as! NSNumber,
+                    "percentMale": self.locationsObjectDictionary!["results"]![i]["business_details"]!!["percent_male"]! as! NSNumber]
+                
+                // Add to locationPins array
+                print("Before insertion into pin: \(businessDictionary)")
+                //print("HERE 2")
+                self.locationPins.append(CustomPin(title: name, subtitle: address, coordinate: CLLocationCoordinate2D(latitude: latitude, longitude: longitude), businessDictionary: businessDictionary))
+                print("Number of entries in locationPins: \(self.locationPins.count)")
+                
+            }
         }
     }
     
     // MARK: - NSURLSessionDelegate
     
     func URLSessionDidFinishEventsForBackgroundURLSession(session: NSURLSession) {
-        print("URL SESSION DID FINISH EVENTS FOR BACKGROUND")
+        print("Updated location in background")
     }
     
     func URLSession(session: NSURLSession, didBecomeInvalidWithError error: NSError?) {
         if error != nil {
-            print("error from sessiondelegate: \(error?.localizedDescription)")
+            print("error from session delegate: \(error?.localizedDescription)")
         }
     }
     
@@ -726,7 +702,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: (NSURLSessionResponseDisposition) -> Void) {
         
-        print("DID RECEIVE RESPONSE")
+        print("Response received for background location updates")
         // Checking HTTP Response in case of error
         let httpResponse = response as? NSHTTPURLResponse
         
@@ -738,7 +714,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     // MARK: - NSURLSessionTaskDelegate
     
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-        print("DID COMPLETE WITH ERROR")
+        print("Completed with error")
         if error != nil {
             print("error from taskdelegate: \(error?.localizedDescription)")
         }

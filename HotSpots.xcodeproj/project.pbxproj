@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		A1006C381C0CD1B7000D1297 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1006C371C0CD1B7000D1297 /* WelcomeViewController.swift */; };
+		A11316DA1C8488F1003218C5 /* BusinessDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11316D91C8488F1003218C5 /* BusinessDetailView.swift */; };
 		A1143FE31C35D57800462D92 /* SortByViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1143FE21C35D57800462D92 /* SortByViewController.swift */; };
 		A1143FE51C3717A400462D92 /* SortByGenderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1143FE41C3717A400462D92 /* SortByGenderViewController.swift */; };
 		A1143FE71C37181900462D92 /* SortByAgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1143FE61C37181900462D92 /* SortByAgeViewController.swift */; };
@@ -28,7 +29,7 @@
 		A1A26B7E1C40593700F34E13 /* CustomUITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A26B7D1C40593700F34E13 /* CustomUITableView.swift */; };
 		A1A26B801C40656B00F34E13 /* CustomUITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A26B7F1C40656B00F34E13 /* CustomUITextView.swift */; };
 		A1B7B5B91BDAAF6100468E52 /* CustomPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B7B5B81BDAAF6100468E52 /* CustomPin.swift */; };
-		A1FE58BA1BEC51390075FBC1 /* BusinessDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FE58B91BEC51390075FBC1 /* BusinessDetailView.swift */; };
+		A1FE58BA1BEC51390075FBC1 /* BusinessDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FE58B91BEC51390075FBC1 /* BusinessDetailViewController.swift */; };
 		A1FE58BC1BED45EC0075FBC1 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FE58BB1BED45EC0075FBC1 /* SettingsViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +52,7 @@
 
 /* Begin PBXFileReference section */
 		A1006C371C0CD1B7000D1297 /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
+		A11316D91C8488F1003218C5 /* BusinessDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BusinessDetailView.swift; sourceTree = "<group>"; };
 		A1143FE21C35D57800462D92 /* SortByViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortByViewController.swift; sourceTree = "<group>"; };
 		A1143FE41C3717A400462D92 /* SortByGenderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortByGenderViewController.swift; sourceTree = "<group>"; };
 		A1143FE61C37181900462D92 /* SortByAgeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortByAgeViewController.swift; sourceTree = "<group>"; };
@@ -77,7 +79,7 @@
 		A1A26B7D1C40593700F34E13 /* CustomUITableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomUITableView.swift; sourceTree = "<group>"; };
 		A1A26B7F1C40656B00F34E13 /* CustomUITextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomUITextView.swift; sourceTree = "<group>"; };
 		A1B7B5B81BDAAF6100468E52 /* CustomPin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPin.swift; sourceTree = "<group>"; };
-		A1FE58B91BEC51390075FBC1 /* BusinessDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BusinessDetailView.swift; sourceTree = "<group>"; };
+		A1FE58B91BEC51390075FBC1 /* BusinessDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BusinessDetailViewController.swift; sourceTree = "<group>"; };
 		A1FE58BB1BED45EC0075FBC1 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -133,7 +135,8 @@
 				A1006C371C0CD1B7000D1297 /* WelcomeViewController.swift */,
 				A16197A51BCEA3CD0028886B /* MapViewController.swift */,
 				A17827071C30703F001F9299 /* ListViewController.swift */,
-				A1FE58B91BEC51390075FBC1 /* BusinessDetailView.swift */,
+				A11316D91C8488F1003218C5 /* BusinessDetailView.swift */,
+				A1FE58B91BEC51390075FBC1 /* BusinessDetailViewController.swift */,
 				A1FE58BB1BED45EC0075FBC1 /* SettingsViewController.swift */,
 				A1143FE21C35D57800462D92 /* SortByViewController.swift */,
 				A1143FE41C3717A400462D92 /* SortByGenderViewController.swift */,
@@ -310,7 +313,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A16197A61BCEA3CD0028886B /* MapViewController.swift in Sources */,
-				A1FE58BA1BEC51390075FBC1 /* BusinessDetailView.swift in Sources */,
+				A1FE58BA1BEC51390075FBC1 /* BusinessDetailViewController.swift in Sources */,
 				A1A26B781C3EBC6F00F34E13 /* AgeViewController.swift in Sources */,
 				A1143FE51C3717A400462D92 /* SortByGenderViewController.swift in Sources */,
 				A1A26B801C40656B00F34E13 /* CustomUITextView.swift in Sources */,
@@ -326,6 +329,7 @@
 				A1006C381C0CD1B7000D1297 /* WelcomeViewController.swift in Sources */,
 				A16197A41BCEA3CD0028886B /* AppDelegate.swift in Sources */,
 				A1A26B7E1C40593700F34E13 /* CustomUITableView.swift in Sources */,
+				A11316DA1C8488F1003218C5 /* BusinessDetailView.swift in Sources */,
 				A1143FE71C37181900462D92 /* SortByAgeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

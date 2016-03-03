@@ -43,13 +43,60 @@ class GenderViewController: UITableViewController {
             tableView.cellForRowAtIndexPath(indexPath)?.accessoryType = .Checkmark
             
             let label = tableView.cellForRowAtIndexPath(indexPath)?.contentView.subviews[0] as! UILabel
+            print("Before setting gender \(defaults.objectForKey("Gender"))")
             defaults.setObject(label.text, forKey: "Gender")
-            
+            print("After setting Gender \(defaults.objectForKey("Gender"))")
+            self.updateGenderReq()
         }
         
         self.oldIndexPath = indexPath
     }
 
-   
+    func updateGenderReq() {
+    
+        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
+        let session = NSURLSession(configuration: config)
+        let URL = NSURL(string: "http://localhost:3000/updategender")
+        let request = NSMutableURLRequest(URL: URL!)
+        
+        // Configuring the request
+        request.HTTPMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(KeychainManager.stringForKey("token")! as String, forHTTPHeaderField: "Authorization")
+      
+        
+        // Parameters sent to the server
+        var gender = String()
+        String(defaults.valueForKey("Gender")!) == "Male" ? (gender = "M") : (gender = "F")
+        print("Gender set as: \(gender)")
+        let params: [String: AnyObject] = ["gender": gender, "userID": KeychainManager.stringForKey("userID")!]
+        
+        // Turning your data into JSON format and storing in HTTP request body
+        do {
+            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(params, options: .PrettyPrinted)
+        } catch {
+            print("Error serializing data with json object")
+        }
+        
+        // Making a request over the network with request
+        // Returns data, response, error objects
+        let task = session.dataTaskWithRequest(request) { (data, response, error) -> Void in
+            
+            // Checking HTTP Response in case of error
+            let httpResponse = response as? NSHTTPURLResponse
+            
+            if httpResponse?.statusCode != 200 {
+                print(httpResponse?.statusCode)
+            }
+            
+            // Checking if error is nil
+            if error != nil {
+                print("Localized description error: \(error?.localizedDescription)")
+            }
+        }
+        
+        // Start the session
+        task.resume()
+    }
 
 }

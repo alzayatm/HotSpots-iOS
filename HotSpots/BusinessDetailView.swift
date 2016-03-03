@@ -2,40 +2,30 @@
 //  BusinessDetailView.swift
 //  HotSpots
 //
-//  Created by Mihad Alzayat on 11/5/15.
-//  Copyright © 2015 Mihad Alzayat. All rights reserved.
+//  Created by mihad alzayat on 2/29/16.
+//  Copyright © 2016 Mihad Alzayat. All rights reserved.
 //
 
 import UIKit
 
-class BusinessDetailView: UIViewController {
-
-    @IBOutlet weak var numberOfPeopleLabel: UILabel!
-    @IBOutlet weak var averageAgeLabel: UILabel!
-    @IBOutlet weak var numOfMalesLabel: UILabel!
-    @IBOutlet weak var numOfFemalesLabel: UILabel!
-    @IBOutlet weak var percentFemaleLabel: UILabel!
-    @IBOutlet weak var percentMaleLabel: UILabel!
+class BusinessDetailView: UIView {
     
+    override func drawRect(rect: CGRect) {
     
-    var numOfPeople: String! 
-    var averageAge: String!
-    var numOfFemales: String!
-    var numOfMales: String!
-    var percentFemale: String!
-    var percentMale: String!
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        numberOfPeopleLabel.text = numOfPeople
-        averageAgeLabel.text = averageAge
-        numOfMalesLabel.text = numOfMales
-        numOfFemalesLabel.text = numOfFemales
-        percentMaleLabel.text = percentMale
-        percentFemaleLabel.text = percentFemale
+        // Get current context
+        let context = UIGraphicsGetCurrentContext()
         
+        // Set color
+        CGContextSetStrokeColorWithColor(context, UIColor(red: 0.2, green: 0.4, blue: 1, alpha: 1.0).CGColor)
         
+        let rectangle = CGRectMake((frame.size.width / 3) - 50, (frame.size.height / 2) + 40,220,220)
+        CGContextAddEllipseInRect(context,rectangle)
+        
+        // Set fill color
+        CGContextSetFillColorWithColor(context, UIColor(red: 0.2, green: 0.4, blue: 0.5, alpha: 1.0).CGColor)
+        
+        CGContextFillPath(context)
+        CGContextStrokePath(context)
+
     }
-
 }
