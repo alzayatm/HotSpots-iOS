@@ -15,7 +15,6 @@ class CustomPin: NSObject, MKAnnotation {
     var subtitle: String?
     var coordinate: CLLocationCoordinate2D
     var businessDictionary: [String: AnyObject]?
-    var numberOfPeopleLabel: UILabel?
     
     init(title: String, subtitle: String, coordinate: CLLocationCoordinate2D, businessDictionary: [String: AnyObject]?) {
         self.title = title

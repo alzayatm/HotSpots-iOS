@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A1006C381C0CD1B7000D1297 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1006C371C0CD1B7000D1297 /* WelcomeViewController.swift */; };
+		A105717D1C8DE6CA00A55CCA /* CustomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A105717C1C8DE6CA00A55CCA /* CustomCell.swift */; };
+		A105717F1C8DEDC900A55CCA /* PieChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A105717E1C8DEDC900A55CCA /* PieChartView.swift */; };
 		A11316DA1C8488F1003218C5 /* BusinessDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A11316D91C8488F1003218C5 /* BusinessDetailView.swift */; };
 		A1143FE31C35D57800462D92 /* SortByViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1143FE21C35D57800462D92 /* SortByViewController.swift */; };
 		A1143FE51C3717A400462D92 /* SortByGenderViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1143FE41C3717A400462D92 /* SortByGenderViewController.swift */; };
@@ -23,6 +25,7 @@
 		A17826881C23B4E1001F9299 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A17826871C23B4E1001F9299 /* KeychainManager.swift */; };
 		A17827021C2DDA59001F9299 /* CustomUITextField .swift in Sources */ = {isa = PBXBuildFile; fileRef = A17827011C2DDA59001F9299 /* CustomUITextField .swift */; };
 		A17827081C30703F001F9299 /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A17827071C30703F001F9299 /* ListViewController.swift */; };
+		A1844DB31C88C0F200F60B29 /* CustomMKAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1844DB21C88C0F200F60B29 /* CustomMKAnnotationView.swift */; };
 		A1A26B781C3EBC6F00F34E13 /* AgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A26B771C3EBC6F00F34E13 /* AgeViewController.swift */; };
 		A1A26B7A1C3F31B000F34E13 /* ContactUsViewcontroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A26B791C3F31B000F34E13 /* ContactUsViewcontroller.swift */; };
 		A1A26B7C1C4057A500F34E13 /* CustomUIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A26B7B1C4057A500F34E13 /* CustomUIScrollView.swift */; };
@@ -52,6 +55,8 @@
 
 /* Begin PBXFileReference section */
 		A1006C371C0CD1B7000D1297 /* WelcomeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WelcomeViewController.swift; sourceTree = "<group>"; };
+		A105717C1C8DE6CA00A55CCA /* CustomCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomCell.swift; sourceTree = "<group>"; };
+		A105717E1C8DEDC900A55CCA /* PieChartView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PieChartView.swift; sourceTree = "<group>"; };
 		A11316D91C8488F1003218C5 /* BusinessDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BusinessDetailView.swift; sourceTree = "<group>"; };
 		A1143FE21C35D57800462D92 /* SortByViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortByViewController.swift; sourceTree = "<group>"; };
 		A1143FE41C3717A400462D92 /* SortByGenderViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SortByGenderViewController.swift; sourceTree = "<group>"; };
@@ -73,6 +78,7 @@
 		A17826871C23B4E1001F9299 /* KeychainManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		A17827011C2DDA59001F9299 /* CustomUITextField .swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CustomUITextField .swift"; sourceTree = "<group>"; };
 		A17827071C30703F001F9299 /* ListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
+		A1844DB21C88C0F200F60B29 /* CustomMKAnnotationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomMKAnnotationView.swift; sourceTree = "<group>"; };
 		A1A26B771C3EBC6F00F34E13 /* AgeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgeViewController.swift; sourceTree = "<group>"; };
 		A1A26B791C3F31B000F34E13 /* ContactUsViewcontroller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactUsViewcontroller.swift; sourceTree = "<group>"; };
 		A1A26B7B1C4057A500F34E13 /* CustomUIScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomUIScrollView.swift; sourceTree = "<group>"; };
@@ -135,8 +141,8 @@
 				A1006C371C0CD1B7000D1297 /* WelcomeViewController.swift */,
 				A16197A51BCEA3CD0028886B /* MapViewController.swift */,
 				A17827071C30703F001F9299 /* ListViewController.swift */,
-				A11316D91C8488F1003218C5 /* BusinessDetailView.swift */,
 				A1FE58B91BEC51390075FBC1 /* BusinessDetailViewController.swift */,
+				A11316D91C8488F1003218C5 /* BusinessDetailView.swift */,
 				A1FE58BB1BED45EC0075FBC1 /* SettingsViewController.swift */,
 				A1143FE21C35D57800462D92 /* SortByViewController.swift */,
 				A1143FE41C3717A400462D92 /* SortByGenderViewController.swift */,
@@ -145,6 +151,9 @@
 				A1A26B771C3EBC6F00F34E13 /* AgeViewController.swift */,
 				A1A26B791C3F31B000F34E13 /* ContactUsViewcontroller.swift */,
 				A17826871C23B4E1001F9299 /* KeychainManager.swift */,
+				A105717E1C8DEDC900A55CCA /* PieChartView.swift */,
+				A1844DB21C88C0F200F60B29 /* CustomMKAnnotationView.swift */,
+				A105717C1C8DE6CA00A55CCA /* CustomCell.swift */,
 				A1B7B5B81BDAAF6100468E52 /* CustomPin.swift */,
 				A17827011C2DDA59001F9299 /* CustomUITextField .swift */,
 				A1A26B7F1C40656B00F34E13 /* CustomUITextView.swift */,
@@ -316,6 +325,8 @@
 				A1FE58BA1BEC51390075FBC1 /* BusinessDetailViewController.swift in Sources */,
 				A1A26B781C3EBC6F00F34E13 /* AgeViewController.swift in Sources */,
 				A1143FE51C3717A400462D92 /* SortByGenderViewController.swift in Sources */,
+				A105717F1C8DEDC900A55CCA /* PieChartView.swift in Sources */,
+				A1844DB31C88C0F200F60B29 /* CustomMKAnnotationView.swift in Sources */,
 				A1A26B801C40656B00F34E13 /* CustomUITextView.swift in Sources */,
 				A131CB141C3DFDCE00A0177F /* GenderViewController.swift in Sources */,
 				A1A26B7A1C3F31B000F34E13 /* ContactUsViewcontroller.swift in Sources */,
@@ -330,6 +341,7 @@
 				A16197A41BCEA3CD0028886B /* AppDelegate.swift in Sources */,
 				A1A26B7E1C40593700F34E13 /* CustomUITableView.swift in Sources */,
 				A11316DA1C8488F1003218C5 /* BusinessDetailView.swift in Sources */,
+				A105717D1C8DE6CA00A55CCA /* CustomCell.swift in Sources */,
 				A1143FE71C37181900462D92 /* SortByAgeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

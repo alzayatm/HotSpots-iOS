@@ -24,9 +24,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     // Array of locations returned as search results
     var searchResults = [MKMapItem]()
     
-    // Filter the search results for
-    //var filteredSearchResults = [MKMapItem]()
-    
     // Table view controller that will manage displaying the results
     var tableViewController = UITableViewController()
     
@@ -200,6 +197,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         // Get last updated location
         let location = locations.last
         
+
         if firstLocationUpdate {
             let center = CLLocationCoordinate2D(latitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!)
             let region = MKCoordinateRegion(center: center, span: MKCoordinateSpanMake(0.01, 0.01))
@@ -208,7 +206,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             
             self.firstLocationUpdate = false
         }
-        
         
         // If the user is travelling less than 5 mph, update location
         //print("Your speed is \(manager.location?.speed)")
@@ -426,15 +423,25 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         // Attempt to reuse pins that were active
         // Create a custom annotation view if nil 
-        var annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier("pin")
+        var annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier("Pin")
+        let customPinAnnotation = annotation as! CustomPin
+        let numOfPeopleLabel = UILabel(frame: CGRectMake(9, 10, 200, 20))
         
-        // when there is no pin to reuse
+        // When there is no pin to reuse
         if annotationView == nil {
             
-            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: "pin")
+            annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: "Pin")
             annotationView?.centerOffset = CGPoint(x: 0, y: -25)
             annotationView!.canShowCallout = true
             annotationView!.image = UIImage(named: "Pin")
+            
+            
+            // 50, 5, 200, 20 -- 12, -20, 200, 20
+            print("Num of people \(customPinAnnotation.businessDictionary!["numOfPeople"]!)")
+            numOfPeopleLabel.text = String(customPinAnnotation.businessDictionary!["numOfPeople"]!)
+            
+            annotationView?.subviews.last?.removeFromSuperview()
+            annotationView?.addSubview(numOfPeopleLabel)
             
             // Left call out number of people
             //let leftCallOutLabel = UILabel()
@@ -446,8 +453,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         } else {
             annotationView!.annotation = annotation
+            numOfPeopleLabel.text = String(customPinAnnotation.businessDictionary!["numOfPeople"]!)
+            annotationView?.subviews.last?.removeFromSuperview()
+        
+            annotationView?.addSubview(numOfPeopleLabel)
         }
-    
         return annotationView
     }
     
@@ -459,8 +469,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
   
     func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        
-        //self.locations.removeAll(keepCapacity: false)
         
         let viewFrameWidth = self.view.frame.width
         let animatesToFrame = CGRect(x: 0, y: 108.2, width: viewFrameWidth, height: 17)
@@ -516,13 +524,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             let pin = (sender as? MKAnnotationView)?.annotation as! CustomPin
             let viewController = segue.destinationViewController as! BusinessDetailViewController
             viewController.title = (pin.title)!
-            print("Before Segue")
-            print(pin.businessDictionary)
+    
             viewController.businessDictionary = pin.businessDictionary
             viewController.longitude = pin.coordinate.longitude
             viewController.latitude = pin.coordinate.latitude
         }
-    
     }
     
     // MARK: - Navigation bar button presentation functions
@@ -530,11 +536,13 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     @IBAction func listView(sender: AnyObject) {
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let listViewController = storyboard.instantiateViewControllerWithIdentifier("List View")
+        let destinationViewController = storyboard.instantiateViewControllerWithIdentifier("List View") as! ListViewController
         
-        listViewController.modalTransitionStyle = .FlipHorizontal
-        let navController = UINavigationController(rootViewController: listViewController)
+        destinationViewController.modalTransitionStyle = .FlipHorizontal
+        destinationViewController.locationsObjectDictionary = self.locationsObjectDictionary
+        let navController = UINavigationController(rootViewController: destinationViewController)
         self.presentViewController(navController, animated: true, completion: nil)
+
         
     }
     
@@ -618,10 +626,10 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                 //Store JSON data into dictionary
                 self.locationsObjectDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSMutableDictionary
                 //print("HERE 1")
-                print(self.locationsObjectDictionary)
+                //print(self.locationsObjectDictionary)
                 
             } catch {
-               print(error)
+               print("JSON object could not be retrieved: \(error)")
             }
             completion()
         }
@@ -674,7 +682,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
                     "numOfFemales": self.locationsObjectDictionary!["results"]![i]["business_details"]!!["num_of_females"]! as! NSNumber,
                     "numOfMales": self.locationsObjectDictionary!["results"]![i]["business_details"]!!["num_of_males"]! as! NSNumber,
                     "percentFemale": self.locationsObjectDictionary!["results"]![i]["business_details"]!!["percent_female"]! as! NSNumber,
-                    "percentMale": self.locationsObjectDictionary!["results"]![i]["business_details"]!!["percent_male"]! as! NSNumber]
+                    "percentMale": self.locationsObjectDictionary!["results"]![i]["business_details"]!!["percent_male"]! as! NSNumber,
+                    "businessName": self.locationsObjectDictionary!["results"]![i]["business_details"]!!["business_name"]! as! String,
+                    "businessAddress": self.locationsObjectDictionary!["results"]![i]["business_details"]!!["business_address"] as! String]
                 
                 // Add to locationPins array
                 print("Before insertion into pin: \(businessDictionary)")
