@@ -12,7 +12,6 @@ class CustomCell: UITableViewCell {
 
     @IBOutlet weak var businessNameLabel: UILabel!
     @IBOutlet weak var businessAddressLabel: UILabel!
-    @IBOutlet weak var pieChartView: UIView!
     @IBOutlet weak var numOfFemalesLabel: UILabel!
     @IBOutlet weak var numOfMalesLabel: UILabel!
     @IBOutlet weak var avgAgeLabel: UILabel!

@@ -54,9 +54,9 @@ class BusinessDetailViewController: UIViewController, MKMapViewDelegate {
         let pieChartView = BusinessDetailView()
         pieChartView.frame = CGRectMake((self.view.frame.size.width / 3) - 50, (self.view.frame.size.height / 2) + 75,220,220)
         //let b = CGRectMakeCGRectMake((self.view.frame.size.width / 3) - 50, (self.view.frame.size.height / 2) + 40,220,220)
-        //CGRectMake(<#T##x: CGFloat##CGFloat#>, <#T##y: CGFloat##CGFloat#>, <#T##width: CGFloat##CGFloat#>, <#T##height: CGFloat##CGFloat#>)
+
         pieChartView.segments = [
-            Segment(aColor: UIColor(red: 0.9, green: 0.0, blue: 0.5, alpha: 1), aName: String(businessDictionary!["percentFemale"]!) + "%", aValue: CGFloat(businessDictionary["percentFemale"]! as! NSNumber)),
+            Segment(aColor: UIColor(red: 250/255, green: 114/255, blue: 208/255, alpha: 1), aName: String(businessDictionary!["percentFemale"]!) + "%", aValue: CGFloat(businessDictionary["percentFemale"]! as! NSNumber)),
             Segment(aColor: UIColor(red: 0.2, green: 0.4, blue: 1, alpha: 1.0), aName: String(businessDictionary!["percentMale"]!) + "%", aValue: CGFloat(businessDictionary["percentMale"] as! NSNumber))
         ]
         

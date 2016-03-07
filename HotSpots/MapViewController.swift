@@ -43,7 +43,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     var locationPins = [CustomPin]()
     
     // Locations Dictionary 
-    var locationsObjectDictionary: NSMutableDictionary!
+    var locationsObjectDictionary: NSMutableDictionary?
     
     // Zoom in label variables
     var firstLaunch = true
@@ -431,7 +431,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         if annotationView == nil {
             
             annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: "Pin")
-            annotationView?.centerOffset = CGPoint(x: 0, y: -25)
+            annotationView?.centerOffset = CGPoint(x: 0, y: 0)
             annotationView!.canShowCallout = true
             annotationView!.image = UIImage(named: "Pin")
             

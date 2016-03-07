@@ -23,28 +23,27 @@ class ListViewController: UITableViewController {
         
     }
     
-    
     func addObjectDictionaryToLocationResults() {
         
         for var i = 0; i < locationsObjectDictionary?["results"]!.count; i++ {
             
             if !(self.locationsObjectDictionary?["results"]![i] is NSNull) {
                 
-                locationResults.append(["BusinessName": locationsObjectDictionary!["results"]![i]["business_details"]!!["business_name"] as! String,
+                locationResults.append(["businessName": locationsObjectDictionary!["results"]![i]["business_details"]!!["business_name"] as! String,
                     
-                    "AverageAge": locationsObjectDictionary!["results"]![i]["business_details"]!!["average_age"] as! NSNumber,
+                    "averageAge": locationsObjectDictionary!["results"]![i]["business_details"]!!["average_age"] as! NSNumber,
                     
-                    "BusinessAddress": locationsObjectDictionary!["results"]![i]["business_details"]!!["business_address"] as! String,
+                    "businessAddress": locationsObjectDictionary!["results"]![i]["business_details"]!!["business_address"] as! String,
                     
-                    "NumOfPeople": locationsObjectDictionary!["results"]![i]["business_details"]!!["num_of_people"] as! NSNumber,
+                    "numOfPeople": locationsObjectDictionary!["results"]![i]["business_details"]!!["num_of_people"] as! NSNumber,
                     
-                    "NumOfFemales": locationsObjectDictionary!["results"]![i]["business_details"]!!["num_of_females"] as! NSNumber,
+                    "numOfFemales": locationsObjectDictionary!["results"]![i]["business_details"]!!["num_of_females"] as! NSNumber,
                     
-                    "NumOfMales": locationsObjectDictionary!["results"]![i]["business_details"]!!["num_of_males"] as! NSNumber,
+                    "numOfMales": locationsObjectDictionary!["results"]![i]["business_details"]!!["num_of_males"] as! NSNumber,
                     
-                    "PercentMale": locationsObjectDictionary!["results"]![i]["business_details"]!!["percent_male"] as! NSNumber,
+                    "percentMale": locationsObjectDictionary!["results"]![i]["business_details"]!!["percent_male"] as! NSNumber,
                     
-                    "PercentFemale": locationsObjectDictionary!["results"]![i]["business_details"]!!["percent_female"] as! NSNumber,
+                    "percentFemale": locationsObjectDictionary!["results"]![i]["business_details"]!!["percent_female"] as! NSNumber,
                     
                     "Latitude": locationsObjectDictionary!["results"]![i]["coordinates"]!!["y"]!! as! CLLocationDegrees,
                     
@@ -77,12 +76,22 @@ class ListViewController: UITableViewController {
         
         let cell = self.tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as! CustomCell
         
-        cell.businessNameLabel.text = String(locationResults[indexPath.row]["BusinessName"]!)
-        cell.businessAddressLabel.text = String(locationResults[indexPath.row]["BusinessAddress"]!)
-        cell.numOfPeopleLabel.text = String(locationResults[indexPath.row]["NumOfPeople"]!)
-        cell.avgAgeLabel.text = String(locationResults[indexPath.row]["AverageAge"]!)
-        cell.numOfMalesLabel.text = String(locationResults[indexPath.row]["NumOfMales"]!)
-        cell.numOfFemalesLabel.text = String(locationResults[indexPath.row]["NumOfFemales"]!)
+        cell.businessNameLabel.text = String(locationResults[indexPath.row]["businessName"]!)
+        cell.businessAddressLabel.text = String(locationResults[indexPath.row]["businessAddress"]!)
+        cell.numOfPeopleLabel.text = String(locationResults[indexPath.row]["numOfPeople"]!)
+        cell.avgAgeLabel.text = String(locationResults[indexPath.row]["averageAge"]!)
+        cell.numOfMalesLabel.text = String(locationResults[indexPath.row]["numOfMales"]!)
+        cell.numOfFemalesLabel.text = String(locationResults[indexPath.row]["numOfFemales"]!)
+        
+        let pieChartView = BusinessDetailView()
+        pieChartView.frame = CGRectMake(267, 14, 75, 71)
+    
+        pieChartView.segments = [
+            Segment(aColor: UIColor(red: 0.2, green: 0.4, blue: 1, alpha: 1.0), aName: "", aValue: locationResults[indexPath.row]["percentMale"] as! CGFloat),
+            Segment(aColor: UIColor(red: 250/255, green: 114/255, blue: 208/255, alpha: 1), aName: "", aValue: locationResults[indexPath.row]["percentFemale"] as! CGFloat)
+        ]
+        
+        cell.addSubview(pieChartView)
         
         
         return cell 
@@ -98,22 +107,26 @@ class ListViewController: UITableViewController {
     
     // MARK: - UITableViewDelegate 
     
-    override func tableView(tableView: UITableView, willSelectRowAtIndexPath indexPath: NSIndexPath) -> NSIndexPath? {
-        
-        self.performSegueWithIdentifier("Detail View", sender: nil)
-        return indexPath
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        self.performSegueWithIdentifier("Detail View", sender: tableView)
     }
+
+    
+
+    // MARK: - PrepareForSegue 
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
         if segue.identifier == "Detail View" {
             
-            let cell = sender as? UITableViewCell
             let destinationViewController = segue.destinationViewController as! BusinessDetailViewController
-            destinationViewController.title = cell?.textLabel?.text
-            destinationViewController.businessDictionary = locationResults[0]
-            destinationViewController.longitude = locationResults[(sender?.indexPath.row)!]["Longitude"] as! CLLocationDegrees
-            destinationViewController.latitude = locationResults[(sender?.indexPath.row)!]["Latitude"] as! CLLocationDegrees
+            let path = (sender as! UITableView).indexPathForSelectedRow
+    
+            destinationViewController.title = String(locationResults[(path?.row)!]["businessName"]!)
+            destinationViewController.businessDictionary = locationResults[(path?.row)!] as [String: AnyObject]
+            destinationViewController.longitude = locationResults[(path?.row)!]["Longitude"] as! CLLocationDegrees
+            destinationViewController.latitude = locationResults[(path?.row)!]["Latitude"] as! CLLocationDegrees
         }
     }
 }

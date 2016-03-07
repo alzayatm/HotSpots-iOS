@@ -121,17 +121,19 @@ class BusinessDetailView: UIView {
                 let textToRender : NSString = segment.name
                 
                 // get the color components of the segement color
-                let colorComponents = CGColorGetComponents(segment.color.CGColor)
+                //let colorComponents = CGColorGetComponents(segment.color.CGColor)
                 
                 // get the average brightness of the color
-                let averageRGB = (colorComponents[0]+colorComponents[1]+colorComponents[2])/3.0
-                
+                //let averageRGB = (colorComponents[0]+colorComponents[1]+colorComponents[2])/3.0
+                /*
                 if averageRGB > 0.7 { // if too light, use black. If too dark, use white
                     textAttributes[NSForegroundColorAttributeName] = UIColor.blackColor()
                 } else {
                     textAttributes[NSForegroundColorAttributeName] = UIColor.whiteColor()
                 }
+                */
                 
+                textAttributes[NSForegroundColorAttributeName] = UIColor.whiteColor()
                 // the bounds that the text will occupy
                 var renderRect = CGRect(origin: CGPointZero, size: textToRender.sizeWithAttributes(textAttributes))
                 
