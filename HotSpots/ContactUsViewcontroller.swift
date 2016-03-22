@@ -8,6 +8,7 @@
 
 import UIKit
 
+
 class ContactUsViewcontroller: UIViewController, UITextViewDelegate {
 
     @IBOutlet weak var scrollView: UIScrollView!
@@ -57,9 +58,14 @@ class ContactUsViewcontroller: UIViewController, UITextViewDelegate {
   
     @IBAction func sendMessage(sender: AnyObject) {
         
-        self.dismissViewControllerAnimated(true, completion: nil)
+        if textView.text.isEmpty == true || issueTextField.text?.isEmpty == true || emailAddressTextField.text?.isEmpty == true {
         
+        } else {
+            self.dismissViewControllerAnimated(true, completion: nil)
+        }
     }
+    
+    
     
     // MARK: - UITextViewDelegate
     

@@ -25,13 +25,15 @@
 		A17826881C23B4E1001F9299 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A17826871C23B4E1001F9299 /* KeychainManager.swift */; };
 		A17827021C2DDA59001F9299 /* CustomUITextField .swift in Sources */ = {isa = PBXBuildFile; fileRef = A17827011C2DDA59001F9299 /* CustomUITextField .swift */; };
 		A17827081C30703F001F9299 /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A17827071C30703F001F9299 /* ListViewController.swift */; };
-		A1844DB31C88C0F200F60B29 /* CustomMKAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1844DB21C88C0F200F60B29 /* CustomMKAnnotationView.swift */; };
 		A1A26B781C3EBC6F00F34E13 /* AgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A26B771C3EBC6F00F34E13 /* AgeViewController.swift */; };
 		A1A26B7A1C3F31B000F34E13 /* ContactUsViewcontroller.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A26B791C3F31B000F34E13 /* ContactUsViewcontroller.swift */; };
 		A1A26B7C1C4057A500F34E13 /* CustomUIScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A26B7B1C4057A500F34E13 /* CustomUIScrollView.swift */; };
 		A1A26B7E1C40593700F34E13 /* CustomUITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A26B7D1C40593700F34E13 /* CustomUITableView.swift */; };
 		A1A26B801C40656B00F34E13 /* CustomUITextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A26B7F1C40656B00F34E13 /* CustomUITextView.swift */; };
 		A1B7B5B91BDAAF6100468E52 /* CustomPin.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B7B5B81BDAAF6100468E52 /* CustomPin.swift */; };
+		A1F84E111C909E6D00EEACC5 /* HowItWorksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F84E101C909E6D00EEACC5 /* HowItWorksViewController.swift */; };
+		A1F84E131C90A18200EEACC5 /* PrivacyPolicyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F84E121C90A18200EEACC5 /* PrivacyPolicyViewController.swift */; };
+		A1F84E151C90A21600EEACC5 /* TermsOfServiceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F84E141C90A21600EEACC5 /* TermsOfServiceViewController.swift */; };
 		A1FE58BA1BEC51390075FBC1 /* BusinessDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FE58B91BEC51390075FBC1 /* BusinessDetailViewController.swift */; };
 		A1FE58BC1BED45EC0075FBC1 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1FE58BB1BED45EC0075FBC1 /* SettingsViewController.swift */; };
 /* End PBXBuildFile section */
@@ -78,13 +80,15 @@
 		A17826871C23B4E1001F9299 /* KeychainManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
 		A17827011C2DDA59001F9299 /* CustomUITextField .swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CustomUITextField .swift"; sourceTree = "<group>"; };
 		A17827071C30703F001F9299 /* ListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
-		A1844DB21C88C0F200F60B29 /* CustomMKAnnotationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomMKAnnotationView.swift; sourceTree = "<group>"; };
 		A1A26B771C3EBC6F00F34E13 /* AgeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AgeViewController.swift; sourceTree = "<group>"; };
 		A1A26B791C3F31B000F34E13 /* ContactUsViewcontroller.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContactUsViewcontroller.swift; sourceTree = "<group>"; };
 		A1A26B7B1C4057A500F34E13 /* CustomUIScrollView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomUIScrollView.swift; sourceTree = "<group>"; };
 		A1A26B7D1C40593700F34E13 /* CustomUITableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomUITableView.swift; sourceTree = "<group>"; };
 		A1A26B7F1C40656B00F34E13 /* CustomUITextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomUITextView.swift; sourceTree = "<group>"; };
 		A1B7B5B81BDAAF6100468E52 /* CustomPin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPin.swift; sourceTree = "<group>"; };
+		A1F84E101C909E6D00EEACC5 /* HowItWorksViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HowItWorksViewController.swift; sourceTree = "<group>"; };
+		A1F84E121C90A18200EEACC5 /* PrivacyPolicyViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyViewController.swift; sourceTree = "<group>"; };
+		A1F84E141C90A21600EEACC5 /* TermsOfServiceViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TermsOfServiceViewController.swift; sourceTree = "<group>"; };
 		A1FE58B91BEC51390075FBC1 /* BusinessDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BusinessDetailViewController.swift; sourceTree = "<group>"; };
 		A1FE58BB1BED45EC0075FBC1 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -152,13 +156,15 @@
 				A1A26B791C3F31B000F34E13 /* ContactUsViewcontroller.swift */,
 				A17826871C23B4E1001F9299 /* KeychainManager.swift */,
 				A105717E1C8DEDC900A55CCA /* PieChartView.swift */,
-				A1844DB21C88C0F200F60B29 /* CustomMKAnnotationView.swift */,
 				A105717C1C8DE6CA00A55CCA /* CustomCell.swift */,
 				A1B7B5B81BDAAF6100468E52 /* CustomPin.swift */,
 				A17827011C2DDA59001F9299 /* CustomUITextField .swift */,
 				A1A26B7F1C40656B00F34E13 /* CustomUITextView.swift */,
 				A1A26B7B1C4057A500F34E13 /* CustomUIScrollView.swift */,
 				A1A26B7D1C40593700F34E13 /* CustomUITableView.swift */,
+				A1F84E101C909E6D00EEACC5 /* HowItWorksViewController.swift */,
+				A1F84E121C90A18200EEACC5 /* PrivacyPolicyViewController.swift */,
+				A1F84E141C90A21600EEACC5 /* TermsOfServiceViewController.swift */,
 				A16197A71BCEA3CD0028886B /* Main.storyboard */,
 				A16197AC1BCEA3CD0028886B /* LaunchScreen.storyboard */,
 				A16197AA1BCEA3CD0028886B /* Assets.xcassets */,
@@ -322,17 +328,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				A16197A61BCEA3CD0028886B /* MapViewController.swift in Sources */,
+				A1F84E151C90A21600EEACC5 /* TermsOfServiceViewController.swift in Sources */,
 				A1FE58BA1BEC51390075FBC1 /* BusinessDetailViewController.swift in Sources */,
 				A1A26B781C3EBC6F00F34E13 /* AgeViewController.swift in Sources */,
 				A1143FE51C3717A400462D92 /* SortByGenderViewController.swift in Sources */,
 				A105717F1C8DEDC900A55CCA /* PieChartView.swift in Sources */,
-				A1844DB31C88C0F200F60B29 /* CustomMKAnnotationView.swift in Sources */,
 				A1A26B801C40656B00F34E13 /* CustomUITextView.swift in Sources */,
 				A131CB141C3DFDCE00A0177F /* GenderViewController.swift in Sources */,
 				A1A26B7A1C3F31B000F34E13 /* ContactUsViewcontroller.swift in Sources */,
 				A1A26B7C1C4057A500F34E13 /* CustomUIScrollView.swift in Sources */,
 				A17826881C23B4E1001F9299 /* KeychainManager.swift in Sources */,
 				A1B7B5B91BDAAF6100468E52 /* CustomPin.swift in Sources */,
+				A1F84E111C909E6D00EEACC5 /* HowItWorksViewController.swift in Sources */,
 				A1FE58BC1BED45EC0075FBC1 /* SettingsViewController.swift in Sources */,
 				A1143FE31C35D57800462D92 /* SortByViewController.swift in Sources */,
 				A17827081C30703F001F9299 /* ListViewController.swift in Sources */,
@@ -341,6 +348,7 @@
 				A16197A41BCEA3CD0028886B /* AppDelegate.swift in Sources */,
 				A1A26B7E1C40593700F34E13 /* CustomUITableView.swift in Sources */,
 				A11316DA1C8488F1003218C5 /* BusinessDetailView.swift in Sources */,
+				A1F84E131C90A18200EEACC5 /* PrivacyPolicyViewController.swift in Sources */,
 				A105717D1C8DE6CA00A55CCA /* CustomCell.swift in Sources */,
 				A1143FE71C37181900462D92 /* SortByAgeViewController.swift in Sources */,
 			);
@@ -484,6 +492,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -493,6 +503,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Alzayat.HotSpots;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -503,6 +514,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -512,6 +525,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Alzayat.HotSpots;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;

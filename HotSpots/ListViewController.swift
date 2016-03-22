@@ -84,7 +84,9 @@ class ListViewController: UITableViewController {
         cell.numOfFemalesLabel.text = String(locationResults[indexPath.row]["numOfFemales"]!)
         
         let pieChartView = BusinessDetailView()
-        pieChartView.frame = CGRectMake(267, 14, 75, 71)
+        pieChartView.frame = CGRectMake(240, 14, 75, 71)
+        // 267, 14, 75, 71
+        
     
         pieChartView.segments = [
             Segment(aColor: UIColor(red: 0.2, green: 0.4, blue: 1, alpha: 1.0), aName: "", aValue: locationResults[indexPath.row]["percentMale"] as! CGFloat),

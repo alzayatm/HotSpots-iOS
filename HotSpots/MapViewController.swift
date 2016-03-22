@@ -71,20 +71,21 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         self.mapView.rotateEnabled = false
     }
     
+    
     // Configure the location of the user
     func configureLocation() {
         
         if CLLocationManager.locationServicesEnabled() {
             
             locationManager.delegate = self
-            
+
             locationManager.requestAlwaysAuthorization()
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             locationManager.allowsBackgroundLocationUpdates = true
-            locationManager.pausesLocationUpdatesAutomatically = false
+            locationManager.pausesLocationUpdatesAutomatically = true
             
             // Distance filter to update location
-            locationManager.distanceFilter = 10
+            locationManager.distanceFilter = 15.0
             
             // Begin updating user location
             locationManager.startUpdatingLocation()
@@ -147,9 +148,9 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     func refreshButtonConfig() {
         
         // Makes the button a circle
-        self.refreshButton.frame = CGRectMake(10, 10, 50, 50)
+        //self.refreshButton.frame = CGRectMake(10, 10, 60, 60)
         
-        self.refreshButton.layer.cornerRadius = 0.5 * refreshButton.bounds.size.width
+        self.refreshButton.layer.cornerRadius = refreshButton.bounds.size.width / 2
         
         // Changes the tint color to white
         self.refreshButton.tintColor = UIColor.whiteColor()
@@ -192,6 +193,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     // Delegate method updating user location based on set criteria 
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     
+        
+        print("Location updated")
         //print(manager.location?.coordinate.latitude)
         //print(manager.location?.coordinate.longitude)
         // Get last updated location
@@ -211,6 +214,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         //print("Your speed is \(manager.location?.speed)")
         if manager.location?.speed <= 3.5 {
             self.updateLongAndLat(location!)
+            print("In the if")
         }
     }
     
@@ -229,7 +233,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
         
         // The URL which the endpoint can be found at
-        let URL = NSURL(string: "http://localhost:3000/updatelocation")
+        let URL = NSURL(string: "http://api.hotspotsapp.us/updatelocation")
         
         // Initialize the request with the URL
         let request = NSMutableURLRequest(URL: URL!)
@@ -336,8 +340,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         let pin = CustomPin(title: mapItem.name!, subtitle: self.streetAddresses[indexPath.row], coordinate: mapItem.placemark.coordinate, businessDictionary: nil)
         
-        mapView.addAnnotation(pin)
-        mapView.selectAnnotation(pin, animated: true)
+        //mapView.addAnnotation(pin)
+        //mapView.selectAnnotation(pin, animated: true)
     
         // (mapItem.placemark.location?.coordinate)!
         mapView.setCenterCoordinate(pin.coordinate, animated: false)
@@ -437,7 +441,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             
             
             // 50, 5, 200, 20 -- 12, -20, 200, 20
-            print("Num of people \(customPinAnnotation.businessDictionary!["numOfPeople"]!)")
+            //print("Num of people \(customPinAnnotation.businessDictionary!["numOfPeople"]!)")
             numOfPeopleLabel.text = String(customPinAnnotation.businessDictionary!["numOfPeople"]!)
             
             annotationView?.subviews.last?.removeFromSuperview()
@@ -543,7 +547,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let navController = UINavigationController(rootViewController: destinationViewController)
         self.presentViewController(navController, animated: true, completion: nil)
 
-        
     }
     
     @IBAction func settingsView(sender: AnyObject) {
@@ -583,7 +586,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let session = NSURLSession(configuration: config)
         
         // The URL which the endpoint can be found at
-        let URL = NSURL(string: "http://localhost:3000/gethotspots")
+        let URL = NSURL(string: "http://api.hotspotsapp.us/gethotspots")
         
         // Initialize the request with the URL
         let request = NSMutableURLRequest(URL: URL!)
@@ -615,18 +618,18 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             let httpResponse = response as? NSHTTPURLResponse
             
             if httpResponse?.statusCode != 200 {
-                print(httpResponse?.statusCode)
+                print("Status code: \(httpResponse?.statusCode)")
             }
             
             if error != nil {
-                print("Localized description error: \(error?.localizedDescription)")
+                print("Localized description error: \(error!.localizedDescription)")
             }
             
             do {
                 //Store JSON data into dictionary
                 self.locationsObjectDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSMutableDictionary
-                //print("HERE 1")
-                //print(self.locationsObjectDictionary)
+            
+                print(self.locationsObjectDictionary)
                 
             } catch {
                print("JSON object could not be retrieved: \(error)")

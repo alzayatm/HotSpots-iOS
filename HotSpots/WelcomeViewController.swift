@@ -76,7 +76,7 @@ class WelcomeViewController: UIViewController, UIPickerViewDelegate, UITextField
             // Add the users age and gender to NSUserDefaults to use in settings
             defaults.setInteger(Int(self.ageTextField.text!)!, forKey: "Age")
             defaults.setObject(self.genderTextField.text, forKey: "Gender")
-    
+        
             self.signUpRequest()
             
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
@@ -85,7 +85,8 @@ class WelcomeViewController: UIViewController, UIPickerViewDelegate, UITextField
             let window = UIApplication.sharedApplication().delegate?.window!
             window?.rootViewController = mapViewController
             
-            print(KeychainManager.stringForKey("token"))
+            //print(KeychainManager.stringForKey("token")!)
+        
         }
         
     }
@@ -103,7 +104,7 @@ class WelcomeViewController: UIViewController, UIPickerViewDelegate, UITextField
         let session = NSURLSession(configuration: config)
         
         // The URL which the endpoint can be found at
-        let URL = NSURL(string: "http://localhost:3000/register")
+        let URL = NSURL(string: "http://api.hotspotsapp.us/register")
         
         // Initialize the request with the URL
         let request = NSMutableURLRequest(URL: URL!)
@@ -156,6 +157,7 @@ class WelcomeViewController: UIViewController, UIPickerViewDelegate, UITextField
                 
                 if KeychainManager.stringForKey("userID") != nil { KeychainManager.delete("userID") }
                 
+               
                 KeychainManager.setString(userID.stringValue, forKey: "userID")
                 KeychainManager.setString( "Bearer " + token, forKey: "token")
             } catch {
