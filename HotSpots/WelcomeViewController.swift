@@ -27,7 +27,7 @@ class WelcomeViewController: UIViewController, UIPickerViewDelegate, UITextField
         super.viewDidLoad()
         
         // Initialize range of ages in age array
-        for var i = 16; i <= 100 ; i++ {
+        for i in 16...100 {
             agePickerData.append(i)
         }
         

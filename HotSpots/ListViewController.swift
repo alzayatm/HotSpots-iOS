@@ -25,9 +25,9 @@ class ListViewController: UITableViewController {
     
     func addObjectDictionaryToLocationResults() {
         
-        for var i = 0; i < locationsObjectDictionary?["results"]!.count; i++ {
+        for var i = 0; i < locationsObjectDictionary?["results"]!.count; i += 1 {
             
-            if !(self.locationsObjectDictionary?["results"]![i] is NSNull) {
+            if !(self.locationsObjectDictionary!["results"]![i] as AnyObject is NSNull) {
                 
                 locationResults.append(["businessName": locationsObjectDictionary!["results"]![i]["business_details"]!!["business_name"] as! String,
                     

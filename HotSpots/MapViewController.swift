@@ -60,6 +60,17 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         self.tableViewController.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "Cell")
         self.definesPresentationContext = true
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MapViewController().centerOnUser), name: UIApplicationDidBecomeActiveNotification, object: nil)
+        
+    }
+    
+    // Centers on users position when app becomes active from background
+    func centerOnUser() {
+        
+        self.mapView.setCenterCoordinate((locationManager.location?.coordinate)!, animated: true)
+        
+        self.mapView.setRegion(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)), animated: false)
     }
     
     // Configure the map view
@@ -85,11 +96,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             locationManager.pausesLocationUpdatesAutomatically = true
             
             // Distance filter to update location
-            locationManager.distanceFilter = 15.0
+            locationManager.distanceFilter = 10.0
             
             // Begin updating user location
             locationManager.startUpdatingLocation()
-            
+        
         } else {
             
             let title = "Location disabled"
@@ -187,50 +198,55 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         } else { // Not Determined - Try to configure location again
             self.configureLocation()
         }
-        
     }
     
     // Delegate method updating user location based on set criteria 
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
     
-        
-        print("Location updated")
         //print(manager.location?.coordinate.latitude)
         //print(manager.location?.coordinate.longitude)
-        // Get last updated location
-        let location = locations.last
-        
 
         if firstLocationUpdate {
-            let center = CLLocationCoordinate2D(latitude: (location?.coordinate.latitude)!, longitude: (location?.coordinate.longitude)!)
+            let center = CLLocationCoordinate2D(latitude: (manager.location?.coordinate.latitude)!, longitude: (manager.location?.coordinate.longitude)!)
             let region = MKCoordinateRegion(center: center, span: MKCoordinateSpanMake(0.01, 0.01))
             
             self.mapView.setRegion(region, animated: true)
-            
+    
             self.firstLocationUpdate = false
         }
         
         // If the user is travelling less than 5 mph, update location
         //print("Your speed is \(manager.location?.speed)")
         if manager.location?.speed <= 3.5 {
-            self.updateLongAndLat(location!)
-            print("In the if")
+            self.updateLongAndLat(manager.location!)
         }
     }
     
+    
+    func noInternetAlertMessage(title: String, message: String) {
+        
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+        
+        let confirm = UIAlertAction(title: "Ok", style: .Default, handler: nil)
+        alertController.addAction(confirm)
+        
+        self.presentViewController(alertController, animated: true, completion: nil)
+    }
+    
+    
     // Location cannot be retrieved delegate method
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-        //print("Error: \(error.localizedDescription)")
-        //print("Internet issue")
+        self.noInternetAlertMessage("Unable to Connect", message: "Unable to retrieve location. Turn on Wi-Fi or cellular connection.")
     }
-
+    
     func updateLongAndLat(location: CLLocation) {
         
         // Configuration for session object
-        let config = NSURLSessionConfiguration.defaultSessionConfiguration()
-        
+        let sessionConfigObject = NSURLSessionConfiguration.defaultSessionConfiguration()
+        sessionConfigObject.discretionary = false
+       
         // Initialize session object with its configuration
-        let session = NSURLSession(configuration: config, delegate: self, delegateQueue: nil)
+        let session = NSURLSession(configuration: sessionConfigObject, delegate: self, delegateQueue: nil)
         
         // The URL which the endpoint can be found at
         let URL = NSURL(string: "http://api.hotspotsapp.us/updatelocation")
@@ -243,6 +259,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(KeychainManager.stringForKey("token")! as String, forHTTPHeaderField: "Authorization")
         
+        print("LONGITUDE = \(location.coordinate.longitude)")
+        print("LATITUDE = \(location.coordinate.latitude)")
         // Parameters sent to the server
         let params: [String: AnyObject] = ["longitude": location.coordinate.longitude, "latitude": location.coordinate.latitude, "userID": KeychainManager.stringForKey("userID")!]
         
@@ -397,6 +415,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             
                 // Storing the array of MKMapItems in the array
                 self.searchResults = (response?.mapItems)!
+                
+                
                 /*
                 // Debugging code
                 print("Number of search results \(self.searchResults.count)")
@@ -671,9 +691,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     
     func addLocationInfoToPins() {
-        for var i = 0; i < self.locationsObjectDictionary?["results"]!.count; i++ {
+        
+        for var i = 0; i < self.locationsObjectDictionary?["results"]!.count; i += 1 {
+        //for result in self.locationsObjectDictionary?["results"]! {
             
-            if !(self.locationsObjectDictionary!["results"]![i] is NSNull) {
+            if !(self.locationsObjectDictionary!["results"]![i] as AnyObject is NSNull) {
                 
                 // Retrieve all info from business
                 let name = self.locationsObjectDictionary!["results"]![i]["business_details"]!!["business_name"]! as! String
@@ -707,7 +729,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     func URLSession(session: NSURLSession, didBecomeInvalidWithError error: NSError?) {
         if error != nil {
-            print("error from session delegate: \(error?.localizedDescription)")
+            print("Error from session delegate: \(error?.localizedDescription)")
         }
     }
     
@@ -718,7 +740,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         print("Response received for background location updates")
         // Checking HTTP Response in case of error
         let httpResponse = response as? NSHTTPURLResponse
-        
+        print("Status code: \(httpResponse?.statusCode)")
         if httpResponse?.statusCode != 200 {
             print(httpResponse?.statusCode)
         }
@@ -729,7 +751,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         print("Completed with error")
         if error != nil {
-            print("error from taskdelegate: \(error?.localizedDescription)")
+            print("Error from taskdelegate: \(error?.localizedDescription)")
         }
     }
 }
