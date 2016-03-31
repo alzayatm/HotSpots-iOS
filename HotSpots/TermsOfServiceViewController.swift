@@ -14,6 +14,8 @@ class TermsOfServiceViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.webView.backgroundColor = UIColor.clearColor()
+        self.automaticallyAdjustsScrollViewInsets = false
 
         let url = NSURL (string: "http://hotspotsapp.us/terms-of-service.html");
         let requestObj = NSURLRequest(URL: url!);

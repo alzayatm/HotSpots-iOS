@@ -25,6 +25,7 @@ class ListViewController: UITableViewController {
     
     func addObjectDictionaryToLocationResults() {
         
+        if locationsObjectDictionary?.count > 0 {
         for var i = 0; i < locationsObjectDictionary?["results"]!.count; i += 1 {
             
             if !(self.locationsObjectDictionary!["results"]![i] as AnyObject is NSNull) {
@@ -49,6 +50,7 @@ class ListViewController: UITableViewController {
                     
                     "Longitude": locationsObjectDictionary!["results"]![i]["coordinates"]!!["x"]!! as! CLLocationDegrees])
             }
+        }
         }
     }
     

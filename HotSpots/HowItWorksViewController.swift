@@ -14,12 +14,12 @@ class HowItWorksViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.webView.backgroundColor = UIColor.clearColor()
+        self.automaticallyAdjustsScrollViewInsets = false
+    
         let url = NSURL (string: "http://hotspotsapp.us/how-it-works.html");
         let requestObj = NSURLRequest(URL: url!);
         webView.loadRequest(requestObj);
+        
     }
-
-   
-   
 }
