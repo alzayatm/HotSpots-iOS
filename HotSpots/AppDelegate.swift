@@ -16,61 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
     var window: UIWindow?
     let defaults = NSUserDefaults.standardUserDefaults()
     let locationManager = CLLocationManager()
-  
-    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-    
-        if manager.location?.speed <= 3.5 {
-            self.updateLongAndLat(manager.location!)
-        }
-    }
-    
-    func updateLongAndLat(location: CLLocation) {
-        
-        // Configuration for session object
-        let sessionConfigObject = NSURLSessionConfiguration.defaultSessionConfiguration()
-    
-        // Initialize session object with its configuration
-        let session = NSURLSession(configuration: sessionConfigObject)
-        
-        // The URL which the endpoint can be found at
-        let URL = NSURL(string: "http://dev-api.hotspotsapp.us/updatelocation")
-        
-        // Initialize the request with the URL
-        let request = NSMutableURLRequest(URL: URL!)
-        
-        // Configuring the request
-        request.HTTPMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue(KeychainManager.stringForKey("token")! as String, forHTTPHeaderField: "Authorization")
-        
-        // Parameters sent to the server
-        let params: [String: AnyObject] = ["longitude": location.coordinate.longitude, "latitude": location.coordinate.latitude, "userID": KeychainManager.stringForKey("userID")!]
-        
-        // Turning your data into JSON format and storing in HTTP request body
-        do {
-            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(params, options: NSJSONWritingOptions.PrettyPrinted)
-        } catch {
-            print("Error serializing data with json object")
-        }
-        
-        // Making a request over the network with request
-        // Returns data, response, error objects
-        let task = session.dataTaskWithRequest(request) { (data, response, error) in
-            
-            let httpResponse = response as? NSHTTPURLResponse
-            
-            if httpResponse?.statusCode != 200 {
-                print("Status code (terminated request): \(httpResponse?.statusCode)")
-            }
-            
-            if error != nil {
-                print("Localized description error (terminated request): \(error!.localizedDescription)")
-            }
-        }
-        
-        // Start the session
-        task.resume()
-    }
+    var lastUserCheckinDictionary: NSMutableDictionary?
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
@@ -99,16 +45,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
             locationManager.delegate = self
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
             locationManager.startUpdatingLocation()
-            locationManager.stopMonitoringSignificantLocationChanges()
         }
-        
+                
         return true
+    }
+    
+    func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
+        
+        if manager.location?.speed <= 3.5 {
+            self.updateLongAndLat(manager.location!, completion: { (lat, long) in
+                if lat != nil && long != nil {
+                    let center = CLLocationCoordinate2D(latitude: lat!, longitude: long!)
+                    let monitoredRegion = CLCircularRegion(center: center, radius: 10.0, identifier: "UserRegion")
+                    self.locationManager.startMonitoringForRegion(monitoredRegion)
+                }
+            })
+            self.locationManager.stopUpdatingLocation()
+        }
     }
 
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-        locationManager.startMonitoringSignificantLocationChanges()
     }
 
     func applicationDidEnterBackground(application: UIApplication) {
@@ -127,8 +85,67 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
 
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-        locationManager.startMonitoringSignificantLocationChanges()
     }
     
+    func updateLongAndLat(location: CLLocation, completion: (lat: CLLocationDegrees?, long: CLLocationDegrees?) -> Void) {
+        
+        // Configuration for session object
+        let sessionConfigObject = NSURLSessionConfiguration.defaultSessionConfiguration()
+        
+        // Initialize session object with its configuration
+        let session = NSURLSession(configuration: sessionConfigObject)
+        
+        // The URL which the endpoint can be found at
+        let URL = NSURL(string: "https://api.hotspotsapp.us/updatelocation")
+        
+        // Initialize the request with the URL
+        let request = NSMutableURLRequest(URL: URL!)
+        
+        // Configuring the request
+        request.HTTPMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(KeychainManager.stringForKey("token")! as String, forHTTPHeaderField: "Authorization")
+        
+        // Parameters sent to the server
+        let params: [String: AnyObject] = ["longitude": location.coordinate.longitude, "latitude": location.coordinate.latitude, "userID": KeychainManager.stringForKey("userID")!]
+        
+        // Turning your data into JSON format and storing in HTTP request body
+        do {
+            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(params, options: NSJSONWritingOptions.PrettyPrinted)
+        } catch {
+            print("Error serializing data with json object")
+        }
+        
+        // Making a request over the network with request
+        // Returns data, response, error objects
+        let task = session.dataTaskWithRequest(request) { (data, response, error) in
+            
+            let httpResponse = response as? NSHTTPURLResponse
+            
+            if httpResponse?.statusCode != 200 {
+                print("Status code: \(httpResponse?.statusCode)")
+            }
+            
+            if error != nil {
+                print("Localized description error: \(error!.localizedDescription)")
+            }
+            
+            
+            do {
+                //Store JSON data into dictionary
+                self.lastUserCheckinDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSMutableDictionary
+                
+            } catch {
+                print("JSON object could not be retrieved: \(error)")
+            }
+            
+            completion(lat: self.lastUserCheckinDictionary?["latitude"] as? CLLocationDegrees, long: self.lastUserCheckinDictionary?["longitude"] as? CLLocationDegrees)
+        }
+        
+        // Start the session
+        task.resume()
+    }
+    
+
 }
 

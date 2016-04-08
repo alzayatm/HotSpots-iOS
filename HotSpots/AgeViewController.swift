@@ -125,7 +125,7 @@ class AgeViewController: UITableViewController, UITextFieldDelegate, UIPickerVie
         
         let config = NSURLSessionConfiguration.defaultSessionConfiguration()
         let session = NSURLSession(configuration: config)
-        let URL = NSURL(string: "http://api.hotspotsapp.us/updateage")
+        let URL = NSURL(string: "https://api.hotspotsapp.us/updateage")
         let request = NSMutableURLRequest(URL: URL!)
         
         // Configuring the request

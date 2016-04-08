@@ -47,7 +47,7 @@ class SortByGenderViewController: UITableViewController {
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         
         if self.oldIndexPath != indexPath {
-            print("Called")
+            
             tableView.cellForRowAtIndexPath(oldIndexPath)?.accessoryType = .None
             tableView.cellForRowAtIndexPath(indexPath)?.accessoryType = .Checkmark
             

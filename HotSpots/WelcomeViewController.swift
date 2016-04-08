@@ -27,7 +27,7 @@ class WelcomeViewController: UIViewController, UIPickerViewDelegate, UITextField
         super.viewDidLoad()
         
         // Initialize range of ages in age array
-        for i in 16...100 {
+        for i in 18...100 {
             agePickerData.append(i)
         }
         
@@ -104,7 +104,7 @@ class WelcomeViewController: UIViewController, UIPickerViewDelegate, UITextField
         let session = NSURLSession(configuration: config)
         
         // The URL which the endpoint can be found at
-        let URL = NSURL(string: "http://api.hotspotsapp.us/register")
+        let URL = NSURL(string: "https://api.hotspotsapp.us/register")
         
         // Initialize the request with the URL
         let request = NSMutableURLRequest(URL: URL!)
@@ -145,7 +145,7 @@ class WelcomeViewController: UIViewController, UIPickerViewDelegate, UITextField
             
             // Checking if error is nil 
             if error != nil {
-                print("Localized description error: \(error?.localizedDescription)")
+                print("Localized description error: \(error!.localizedDescription)")
             }
             
             do {

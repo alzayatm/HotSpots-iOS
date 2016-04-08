@@ -56,7 +56,7 @@ class GenderViewController: UITableViewController {
     
         let config = NSURLSessionConfiguration.defaultSessionConfiguration()
         let session = NSURLSession(configuration: config)
-        let URL = NSURL(string: "http://api.hotspotsapp.us/updategender")
+        let URL = NSURL(string: "https://api.hotspotsapp.us/updategender")
         let request = NSMutableURLRequest(URL: URL!)
         
         // Configuring the request

@@ -45,13 +45,16 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     // Locations Dictionary 
     var locationsObjectDictionary: NSMutableDictionary?
     
+    // Users current location 
+    var lastUserCheckinDictionary: NSMutableDictionary?
+    
     // Zoom in label variables
     var firstLaunch = true
     var zoomInLabel = UILabel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+    
         self.configureLocation()
         self.mapViewConfig()
         self.searchControllerConfig()
@@ -61,17 +64,16 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         self.tableViewController.tableView.registerClass(UITableViewCell.self, forCellReuseIdentifier: "Cell")
         self.definesPresentationContext = true
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(MapViewController().centerOnUser), name: UIApplicationWillEnterForegroundNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.centerOnUser), name: UIApplicationWillEnterForegroundNotification, object: nil)
         
-        /*
-        let timerAction = NSTimer(timeInterval: 6.0, target: self, selector: #selector(MapViewController().startLocationServices), userInfo: nil, repeats: true)
-        timerAction.fire()
-        */
+        let startLocationUpdatesTimer = NSTimer(timeInterval: 600, target: self, selector: #selector(self.startLocationUpdates), userInfo: nil, repeats: true)
         
+        NSRunLoop.mainRunLoop().addTimer(startLocationUpdatesTimer, forMode: NSRunLoopCommonModes)
     }
-    
-    func startLocationServices() {
-        self.locationManager.startUpdatingLocation()
+   
+    // Start location updates 
+    func startLocationUpdates() {
+            self.locationManager.startUpdatingLocation()
     }
     
     // Centers on users position when app becomes active from background
@@ -102,11 +104,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
 
             locationManager.requestAlwaysAuthorization()
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            locationManager.allowsBackgroundLocationUpdates = true
+            locationManager.allowsBackgroundLocationUpdates = false
             locationManager.pausesLocationUpdatesAutomatically = true
             
             // Distance filter to update location
-            locationManager.distanceFilter = 10.0
+            //locationManager.distanceFilter = 10.0
             
             // Begin updating user location
             locationManager.startUpdatingLocation()
@@ -210,16 +212,19 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         }
     }
     
+    // Responding to location events
+    
     // Delegate method updating user location based on set criteria 
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        
+        print("didUpdateCalled")
+        /*
         if UIApplication.sharedApplication().applicationState == .Active {
             print("ACTIVE UPDATE: location")
         } else if UIApplication.sharedApplication().applicationState == .Background {
             print("BACKGROUND UPDATE: location")
         }
+        */
         
-
         if firstLocationUpdate {
             let center = CLLocationCoordinate2D(latitude: (manager.location?.coordinate.latitude)!, longitude: (manager.location?.coordinate.longitude)!)
             let region = MKCoordinateRegion(center: center, span: MKCoordinateSpanMake(0.01, 0.01))
@@ -229,9 +234,21 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             self.firstLocationUpdate = false
         }
         
+      
         // If the user is travelling less than 5 mph, update location
         if manager.location?.speed <= 3.5 {
-            self.updateLongAndLat(manager.location!)
+            self.updateLongAndLat(manager.location!, completion: { (lat, long) in
+                print("LAT: \(lat)")
+                print("LONG: \(long)")
+                if lat != nil && long != nil {
+                    let center = CLLocationCoordinate2D(latitude: lat!, longitude: long!)
+                    let monitoredRegion = CLCircularRegion(center: center, radius: 10.0, identifier: "UserRegion")
+                    monitoredRegion.notifyOnEntry = false
+                    self.locationManager.startMonitoringForRegion(monitoredRegion)
+                    
+                }
+            })
+            self.locationManager.stopUpdatingLocation()
         }
     }
   
@@ -248,11 +265,39 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     // Location cannot be retrieved delegate method
     func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
-        self.noInternetAlertMessage("Unable to Connect", message: error.localizedDescription)
-        manager.stopUpdatingLocation()
-        manager.startUpdatingLocation()
+        self.noInternetAlertMessage("Unable to retrieve user location", message: error.localizedDescription)
     }
     
+    // Responding to region events 
+    
+    // The user did leave the specified region
+    func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
+        print("????????????EXITED REGION???????????????")
+        
+        print("Identifier: \(region.identifier)")
+        if manager.location?.speed <= 3.5 {
+            self.updateLongAndLat(manager.location!, completion: { (lat, long) in
+                if lat != nil && long != nil {
+                    let center = CLLocationCoordinate2D(latitude: lat!, longitude: long!)
+                    let monitoredRegion = CLCircularRegion(center: center, radius: 10.0, identifier: "UserRegion")
+                    self.locationManager.startMonitoringForRegion(monitoredRegion)
+                }
+            })
+        }
+    }
+    
+    // Called when the delegate starts to monitor a new region
+    func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
+        print("Started monitoring for region \(region.identifier)")
+    }
+    
+    // The delegate is unable failed to monitor region changes
+    func locationManager(manager: CLLocationManager, monitoringDidFailForRegion region: CLRegion?, withError error: NSError) {
+        self.noInternetAlertMessage("Unable to monitor region", message: error.localizedDescription)
+    }
+    
+    
+    /*
     func configurationObject() -> NSURLSessionConfiguration {
         
         let sessionConfigObject: NSURLSessionConfiguration
@@ -264,17 +309,18 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         return sessionConfigObject
     }
+    */
     
-    func updateLongAndLat(location: CLLocation) {
+    func updateLongAndLat(location: CLLocation, completion: (lat: CLLocationDegrees?, long: CLLocationDegrees?) -> Void) {
         
         // Configuration for session object
         let sessionConfigObject = NSURLSessionConfiguration.defaultSessionConfiguration()
        
         // Initialize session object with its configuration
-        let session = NSURLSession(configuration: sessionConfigObject, delegate: self, delegateQueue: nil)
+        let session = NSURLSession(configuration: sessionConfigObject)
         
         // The URL which the endpoint can be found at
-        let URL = NSURL(string: "http://api.hotspotsapp.us/updatelocation")
+        let URL = NSURL(string: "https://api.hotspotsapp.us/updatelocation")
         
         // Initialize the request with the URL
         let request = NSMutableURLRequest(URL: URL!)
@@ -284,9 +330,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(KeychainManager.stringForKey("token")! as String, forHTTPHeaderField: "Authorization")
         
-        print("LONGITUDE = \(location.coordinate.longitude)")
-        print("LATITUDE = \(location.coordinate.latitude)")
-        print("USER_ID = \(KeychainManager.stringForKey("userID")!)")
+        //print("LONGITUDE = \(location.coordinate.longitude)")
+        //print("LATITUDE = \(location.coordinate.latitude)")
+        //print("USER_ID = \(KeychainManager.stringForKey("userID")!)")
+        //print(CLLocationManager.authorizationStatus() == .AuthorizedAlways)
+        
         // Parameters sent to the server
         let params: [String: AnyObject] = ["longitude": location.coordinate.longitude, "latitude": location.coordinate.latitude, "userID": KeychainManager.stringForKey("userID")!]
         
@@ -302,7 +350,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let task = session.dataTaskWithRequest(request) { (data, response, error) in
             
             let httpResponse = response as? NSHTTPURLResponse
-            print("Status code: \(httpResponse?.statusCode)")
             
             if httpResponse?.statusCode != 200 {
                 print("Status code: \(httpResponse?.statusCode)")
@@ -311,6 +358,28 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             if error != nil {
                 print("Localized description error: \(error!.localizedDescription)")
             }
+            
+            
+            do {
+                //Store JSON data into dictionary
+                self.lastUserCheckinDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableContainers) as? NSMutableDictionary
+                
+                print("-------DICTIONARY------")
+                print(self.lastUserCheckinDictionary!)
+                /*
+                print("-------------")
+                print("Checkin_id: \(self.lastUserCheckinDictionary!["checkin_id"])")
+                print("user_id: \(self.lastUserCheckinDictionary!["user_id"])")
+                print("location_id \(self.lastUserCheckinDictionary!["location_id"])")
+                print("long: \(self.lastUserCheckinDictionary!["longitude"])")
+                print("lat: \(self.lastUserCheckinDictionary!["latitude"])")
+                */
+                
+            } catch {
+                print("JSON object could not be retrieved: \(error)")
+            }
+            
+            completion(lat: self.lastUserCheckinDictionary?["latitude"] as? CLLocationDegrees, long: self.lastUserCheckinDictionary?["longitude"] as? CLLocationDegrees)
         }
         
         // To display zoom in notification
@@ -318,6 +387,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         // Start the session
         task.resume()
+    
     }
     
     // Helper method to didChangeAuthorization status
@@ -353,7 +423,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     func presentSearchController(searchController: UISearchController) {
         
         //self.mapView.removeAnnotations(self.mapView.annotations)
-        print("Number of address results: \(self.streetAddresses.count)")
+        //print("Number of address results: \(self.streetAddresses.count)")
         searchController.searchBar.barTintColor = UIColor(red: 0.2, green: 0.4, blue: 1, alpha: 0.5)
         
         // Changing the color of the search bar's cancel button to white
@@ -536,6 +606,16 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
   
     func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
        
+        print("----Region did change animated-----")
+        print("The number of monitored regions: \(locationManager.monitoredRegions.count)")
+        print(locationManager.monitoredRegions.first?.identifier)
+        print("Latitude")
+        print((locationManager.monitoredRegions.first as! CLCircularRegion).center.latitude)
+        print("Longitude")
+        print((locationManager.monitoredRegions.first as! CLCircularRegion).center.longitude)
+        
+        
+        
         let viewFrameWidth = self.view.frame.width
         let animatesToFrame = CGRect(x: 0, y: 108.2, width: viewFrameWidth, height: 17)
         let originalFrame = CGRect(x: 0, y: 90, width: viewFrameWidth, height: 17)
@@ -641,7 +721,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         /* Get the prefer search method of the user */
         let defaults = NSUserDefaults.standardUserDefaults()
-        let searchPreference = defaults.objectForKey("SortBy")
+        let searchPreference: String = (defaults.objectForKey("SortBy") as? String)!
+        //let searchPreferenceDetails: String = (defaults.objectForKey("SortByParams") as? String)!
         
         // Configuration for session object
         let config = NSURLSessionConfiguration.defaultSessionConfiguration()
@@ -650,7 +731,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         let session = NSURLSession(configuration: config)
         
         // The URL which the endpoint can be found at
-        let URL = NSURL(string: "http://api.hotspotsapp.us/gethotspots")
+        let URL = NSURL(string: "https://api.hotspotsapp.us/gethotspots")
         
         // Initialize the request with the URL
         let request = NSMutableURLRequest(URL: URL!)
@@ -660,14 +741,21 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(KeychainManager.stringForKey("token")! as String, forHTTPHeaderField: "Authorization")
         
-        
         // Body sent to the server
         var params: [String: AnyObject] = ["NECoordLat": NECoord.latitude, "NECoordLong": NECoord.longitude, "SWCoordLat": SWCoord.latitude, "SWCoordLong": SWCoord.longitude]
         
         // If the user has a search preference, add it to the request
-        if String(searchPreference) != "Most Populated" { params["searchPreferenceDetail"] = defaults.objectForKey("SortByParams")!}
+        if searchPreference ==  "Most Populated" {
+            params["SearchPreference"] = "Most Populated"
+            params["SearchPreferenceDetail"] = defaults.objectForKey("SortByParams")!
+        } else if searchPreference == "Gender" {
+            params["SearchPreference"] = "Gender"
+            params["SearchPreferenceDetail"] = defaults.objectForKey("SortByParams")!
+        } else if searchPreference == "Age" {
+            params["SearchPreference"] = "Age"
+            params["SearchPreferenceDetail"] = defaults.objectForKey("SortByParams")!
+        }
         
-        print(params["searchPreferenceDetail"]!)
         // Turning your data into JSON format and storing in HTTP request body
         do {
             request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(params, options: .PrettyPrinted)
