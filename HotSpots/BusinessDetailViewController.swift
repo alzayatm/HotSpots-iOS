@@ -61,7 +61,8 @@ class BusinessDetailViewController: UIViewController, MKMapViewDelegate {
             Segment(aColor: UIColor(red: 0.2, green: 0.4, blue: 1, alpha: 1.0), aName: String(businessDictionary!["percentMale"]!) + "%", aValue: CGFloat(businessDictionary["percentMale"] as! NSNumber))
         ]
         
-        view.addSubview(pieChartView)
+        self.view.addSubview(pieChartView)
+    
     }
     
     func setDetails() {

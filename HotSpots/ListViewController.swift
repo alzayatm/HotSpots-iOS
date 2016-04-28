@@ -60,7 +60,8 @@ class ListViewController: UITableViewController {
     }
 
     func navigationBarConfig() {
-        self.navigationController?.navigationBar.barTintColor = UIColor(red: 0.2, green: 0.5, blue: 1, alpha: 0.5)
+        
+        self.navigationController?.navigationBar.barTintColor = UIColor(red: 0.2, green: 0.4, blue: 1, alpha: 0.5)
         self.navigationItem.leftBarButtonItem?.tintColor = UIColor.whiteColor()
         
         self.navigationItem.leftBarButtonItem?.image = UIImage(named: "Map")

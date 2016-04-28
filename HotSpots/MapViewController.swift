@@ -54,7 +54,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    
+        
         self.configureLocation()
         self.mapViewConfig()
         self.searchControllerConfig()
@@ -66,14 +66,15 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(self.centerOnUser), name: UIApplicationWillEnterForegroundNotification, object: nil)
         
-        let startLocationUpdatesTimer = NSTimer(timeInterval: 600, target: self, selector: #selector(self.startLocationUpdates), userInfo: nil, repeats: true)
+        let startLocationUpdatesTimer = NSTimer(timeInterval: 300, target: self, selector: #selector(self.startLocationUpdates), userInfo: nil, repeats: true)
         
         NSRunLoop.mainRunLoop().addTimer(startLocationUpdatesTimer, forMode: NSRunLoopCommonModes)
     }
    
     // Start location updates 
     func startLocationUpdates() {
-            self.locationManager.startUpdatingLocation()
+        print("Updating location function")
+        self.locationManager.startUpdatingLocation()
     }
     
     // Centers on users position when app becomes active from background
@@ -108,7 +109,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             locationManager.pausesLocationUpdatesAutomatically = true
             
             // Distance filter to update location
-            //locationManager.distanceFilter = 10.0
+            //locationManager.distanceFilter = 50.0
             
             // Begin updating user location
             locationManager.startUpdatingLocation()
@@ -147,10 +148,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     func navigationBarConfig() {
         
         // Navigation bar logo
-        let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
+        let imageView: UIImageView = UIImageView(frame: CGRect(x:0, y:0, width: 50, height: 50))
         imageView.image = UIImage(named: "NavigationTitleLogo")
+        imageView.contentMode = .ScaleAspectFit
         
-        self.navigationItem.titleView = imageView // UIImageView(image: UIImage(named: "NavigationTitleLogo"))
+        self.navigationItem.titleView = imageView
         
         // First right location navigation item button
         navigationItem.rightBarButtonItems![0].image = UIImage(named: "Location")
@@ -216,7 +218,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     // Delegate method updating user location based on set criteria 
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("didUpdateCalled")
+        print("-----didUpdateCalled-----")
         /*
         if UIApplication.sharedApplication().applicationState == .Active {
             print("ACTIVE UPDATE: location")
@@ -238,18 +240,25 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         // If the user is travelling less than 5 mph, update location
         if manager.location?.speed <= 3.5 {
             self.updateLongAndLat(manager.location!, completion: { (lat, long) in
-                print("LAT: \(lat)")
-                print("LONG: \(long)")
+              
                 if lat != nil && long != nil {
+                    print("MONITORED REGION 1")
                     let center = CLLocationCoordinate2D(latitude: lat!, longitude: long!)
+                    let monitoredRegion = CLCircularRegion(center: center, radius: 10.0, identifier: "UserRegion")
+                    monitoredRegion.notifyOnEntry = false
+                    self.locationManager.startMonitoringForRegion(monitoredRegion)
+                } else {
+                    print("MONITORED REGION 2")
+                    let center = CLLocationCoordinate2D(latitude: (manager.location?.coordinate.latitude)!, longitude: (manager.location?.coordinate.longitude)!)
                     let monitoredRegion = CLCircularRegion(center: center, radius: 10.0, identifier: "UserRegion")
                     monitoredRegion.notifyOnEntry = false
                     self.locationManager.startMonitoringForRegion(monitoredRegion)
                     
                 }
             })
-            self.locationManager.stopUpdatingLocation()
+            
         }
+        self.locationManager.stopUpdatingLocation()
     }
   
     func noInternetAlertMessage(title: String, message: String) {
@@ -272,15 +281,22 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     // The user did leave the specified region
     func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
-        print("????????????EXITED REGION???????????????")
+        //print("????????????EXITED REGION???????????????")
         
-        print("Identifier: \(region.identifier)")
+        //print("Identifier: \(region.identifier)")
         if manager.location?.speed <= 3.5 {
             self.updateLongAndLat(manager.location!, completion: { (lat, long) in
                 if lat != nil && long != nil {
                     let center = CLLocationCoordinate2D(latitude: lat!, longitude: long!)
                     let monitoredRegion = CLCircularRegion(center: center, radius: 10.0, identifier: "UserRegion")
+                    monitoredRegion.notifyOnEntry = false
                     self.locationManager.startMonitoringForRegion(monitoredRegion)
+                } else {
+                    let center = CLLocationCoordinate2D(latitude: (manager.location?.coordinate.latitude)!, longitude: (manager.location?.coordinate.longitude)!)
+                    let monitoredRegion = CLCircularRegion(center: center, radius: 10.0, identifier: "UserRegion")
+                    monitoredRegion.notifyOnEntry = false
+                    self.locationManager.startMonitoringForRegion(monitoredRegion)
+                    
                 }
             })
         }
@@ -329,11 +345,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         request.HTTPMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue(KeychainManager.stringForKey("token")! as String, forHTTPHeaderField: "Authorization")
-        
-        //print("LONGITUDE = \(location.coordinate.longitude)")
-        //print("LATITUDE = \(location.coordinate.latitude)")
-        //print("USER_ID = \(KeychainManager.stringForKey("userID")!)")
-        //print(CLLocationManager.authorizationStatus() == .AuthorizedAlways)
         
         // Parameters sent to the server
         let params: [String: AnyObject] = ["longitude": location.coordinate.longitude, "latitude": location.coordinate.latitude, "userID": KeychainManager.stringForKey("userID")!]
@@ -561,39 +572,72 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         // Create a custom annotation view if nil 
         var annotationView = mapView.dequeueReusableAnnotationViewWithIdentifier("Pin")
         let customPinAnnotation = annotation as! CustomPin
-        let numOfPeopleLabel = UILabel(frame: CGRectMake(9, 10, 200, 20))
+        
+        let numOfPeopleLabel = UILabel(frame: CGRectMake(11, 4, 30, 30))
+        numOfPeopleLabel.adjustsFontSizeToFitWidth = true
         
         // When there is no pin to reuse
         if annotationView == nil {
             
             annotationView = MKAnnotationView(annotation: annotation, reuseIdentifier: "Pin")
-            annotationView?.centerOffset = CGPoint(x: 0, y: 0)
+            annotationView?.centerOffset = CGPoint(x: 0, y: -20)
             annotationView!.canShowCallout = true
-            annotationView!.image = UIImage(named: "Pin")
             
+            let percentMale = customPinAnnotation.businessDictionary!["percentMale"] as! NSInteger
+            if percentMale >= 70 {
+                annotationView?.image = UIImage(named: "DarkBluePin")
+            } else if percentMale >= 51 && percentMale <= 69 {
+                annotationView?.image = UIImage(named: "LightBluePin")
+            } else if percentMale >= 31 && percentMale <= 49 {
+                annotationView?.image = UIImage(named: "LightPinkPin")
+            } else if percentMale < 30 {
+                annotationView?.image = UIImage(named: "DarkPinkPin")
+            } else if percentMale == 50 {
+                annotationView?.image = UIImage(named: "EqualGenderPin")
+            }
             
-            // 50, 5, 200, 20 -- 12, -20, 200, 20
-            //print("Num of people \(customPinAnnotation.businessDictionary!["numOfPeople"]!)")
-            numOfPeopleLabel.text = String(customPinAnnotation.businessDictionary!["numOfPeople"]!)
+            annotationView?.frame = CGRectMake(0, 0, 37.5, 62.5)
+            
+            if customPinAnnotation.businessDictionary!["numOfPeople"]! as! NSInteger > 99 {
+                numOfPeopleLabel.text = "99+"
+            } else {
+                numOfPeopleLabel.text = String(customPinAnnotation.businessDictionary!["numOfPeople"]!)
+            }
             
             annotationView?.subviews.last?.removeFromSuperview()
             annotationView?.addSubview(numOfPeopleLabel)
             
-            // Left call out number of people
-            //let leftCallOutLabel = UILabel()
-            //annotationView?.leftCalloutAccessoryView = leftCallOutLabel
-        
             // Right call out button
             let rightCallOutButton = UIButton(type: UIButtonType.DetailDisclosure)
             annotationView?.rightCalloutAccessoryView = rightCallOutButton
         
         } else {
+            
             annotationView!.annotation = annotation
-            numOfPeopleLabel.text = String(customPinAnnotation.businessDictionary!["numOfPeople"]!)
+            if customPinAnnotation.businessDictionary!["numOfPeople"]! as! NSInteger > 99 {
+                numOfPeopleLabel.text = "99+"
+            } else {
+                numOfPeopleLabel.text = String(customPinAnnotation.businessDictionary!["numOfPeople"]!)
+            }
+            
+            let percentMale = customPinAnnotation.businessDictionary!["percentMale"] as! NSInteger
+            if percentMale >= 70 {
+                annotationView?.image = UIImage(named: "DarkBluePin")
+            } else if percentMale >= 51 && percentMale <= 69 {
+                annotationView?.image = UIImage(named: "LightBluePin")
+            } else if percentMale >= 31 && percentMale <= 49 {
+                annotationView?.image = UIImage(named: "LightPinkPin")
+            } else if percentMale < 30 {
+                annotationView?.image = UIImage(named: "DarkPinkPin")
+            } else if percentMale == 50 {
+                annotationView?.image = UIImage(named: "EqualGenderPin")
+            }
+            
+            annotationView?.frame = CGRectMake(0, 0, 37.5, 62.5)
             annotationView?.subviews.last?.removeFromSuperview()
-        
             annotationView?.addSubview(numOfPeopleLabel)
         }
+        
         return annotationView
     }
     
@@ -606,16 +650,6 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
   
     func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
        
-        print("----Region did change animated-----")
-        print("The number of monitored regions: \(locationManager.monitoredRegions.count)")
-        print(locationManager.monitoredRegions.first?.identifier)
-        print("Latitude")
-        print((locationManager.monitoredRegions.first as! CLCircularRegion).center.latitude)
-        print("Longitude")
-        print((locationManager.monitoredRegions.first as! CLCircularRegion).center.longitude)
-        
-        
-        
         let viewFrameWidth = self.view.frame.width
         let animatesToFrame = CGRect(x: 0, y: 108.2, width: viewFrameWidth, height: 17)
         let originalFrame = CGRect(x: 0, y: 90, width: viewFrameWidth, height: 17)

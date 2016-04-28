@@ -50,20 +50,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate, CLLocationManagerDelegate
         return true
     }
     
-    func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
+        //UINavigationBar.appearance().barTintColor = UIColor.redColor()
         if manager.location?.speed <= 3.5 {
             self.updateLongAndLat(manager.location!, completion: { (lat, long) in
                 if lat != nil && long != nil {
                     let center = CLLocationCoordinate2D(latitude: lat!, longitude: long!)
                     let monitoredRegion = CLCircularRegion(center: center, radius: 10.0, identifier: "UserRegion")
+                    //UINavigationBar.appearance().barTintColor = UIColor.yellowColor()
                     self.locationManager.startMonitoringForRegion(monitoredRegion)
+                } else {
+                    let center = CLLocationCoordinate2D(latitude: (manager.location?.coordinate.latitude)!, longitude: (manager.location?.coordinate.longitude)!)
+                    let monitoredRegion = CLCircularRegion(center: center, radius: 10.0, identifier: "UserRegion")
+                    //UINavigationBar.appearance().barTintColor = UIColor.greenColor()
+                    self.locationManager.startMonitoringForRegion(monitoredRegion)
+                    
                 }
             })
-            self.locationManager.stopUpdatingLocation()
         }
+        
+        self.locationManager.stopUpdatingLocation()
     }
-
+    
+    
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.

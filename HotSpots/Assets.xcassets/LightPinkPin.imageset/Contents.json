@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "165x137.png",
+      "filename" : "Pin_Light_Pink_New.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "165x137-1.png",
+      "filename" : "Pin_Light_Pink_New-1.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "165x137-2.png",
+      "filename" : "Pin_Light_Pink_New-2.png",
       "scale" : "3x"
     }
   ],

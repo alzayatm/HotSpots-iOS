@@ -1008,10 +1008,12 @@
                             <rect key="frame" x="0.0" y="498" width="600" height="23"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="HotSpots Version 1.0" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VXf-Ng-wjl">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="HotSpots Version 1.0.1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VXf-Ng-wjl">
                                     <rect key="frame" x="120" y="2" width="160" height="21"/>
                                     <constraints>
-                                        <constraint firstAttribute="width" constant="160" id="SJA-yg-20S"/>
+                                        <constraint firstAttribute="width" constant="160" id="SJA-yg-20S">
+                                            <variation key="widthClass=compact" constant="167"/>
+                                        </constraint>
                                     </constraints>
                                     <fontDescription key="fontDescription" type="system" weight="thin" pointSize="17"/>
                                     <color key="textColor" red="1" green="0.5" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
@@ -1024,7 +1026,9 @@
                                     <variation key="widthClass=compact" constant="1"/>
                                 </constraint>
                                 <constraint firstAttribute="bottom" secondItem="VXf-Ng-wjl" secondAttribute="bottom" id="bEf-qw-kh7"/>
-                                <constraint firstItem="VXf-Ng-wjl" firstAttribute="centerX" secondItem="blB-1a-2cs" secondAttribute="centerX" constant="12.5" id="piY-Gm-9qb"/>
+                                <constraint firstItem="VXf-Ng-wjl" firstAttribute="centerX" secondItem="blB-1a-2cs" secondAttribute="centerX" constant="12.5" id="piY-Gm-9qb">
+                                    <variation key="widthClass=compact" constant="0.5"/>
+                                </constraint>
                             </constraints>
                             <variation key="default">
                                 <mask key="constraints">
