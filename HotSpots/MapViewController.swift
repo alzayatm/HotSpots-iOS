@@ -48,6 +48,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     // Users current location 
     var lastUserCheckinDictionary: NSMutableDictionary?
     
+    //var camera: MKMapCamera!
+    
     // Zoom in label variables
     var firstLaunch = true
     var zoomInLabel = UILabel()
@@ -83,6 +85,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         self.mapView.setCenterCoordinate((locationManager.location?.coordinate)!, animated: true)
         
         self.mapView.setRegion(MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: (locationManager.location?.coordinate.latitude)!, longitude: (locationManager.location?.coordinate.longitude)!), span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)), animated: false)
+        
     }
     
     
@@ -91,10 +94,11 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         
         self.mapView.delegate = self
         self.mapView.showsUserLocation = true
-        self.mapView.pitchEnabled = false
-        self.mapView.rotateEnabled = false
+        self.mapView.pitchEnabled = true
+        self.mapView.rotateEnabled = true
+        self.mapView.mapType = .HybridFlyover
+        
     }
-    
     
     // Configure the location of the user
     func configureLocation() {
@@ -105,7 +109,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
 
             locationManager.requestAlwaysAuthorization()
             locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            locationManager.allowsBackgroundLocationUpdates = false
+            locationManager.allowsBackgroundLocationUpdates = true
             locationManager.pausesLocationUpdatesAutomatically = true
             
             // Distance filter to update location
@@ -232,7 +236,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
             let region = MKCoordinateRegion(center: center, span: MKCoordinateSpanMake(0.01, 0.01))
             
             self.mapView.setRegion(region, animated: true)
-    
+            
             self.firstLocationUpdate = false
         }
         
@@ -240,15 +244,16 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
         // If the user is travelling less than 5 mph, update location
         if manager.location?.speed <= 3.5 {
             self.updateLongAndLat(manager.location!, completion: { (lat, long) in
-              
+                print("lat \(lat)")
+                print("long \(long)")
                 if lat != nil && long != nil {
-                    print("MONITORED REGION 1")
+                    print("LAUNCH MONITORED REGION 1")
                     let center = CLLocationCoordinate2D(latitude: lat!, longitude: long!)
                     let monitoredRegion = CLCircularRegion(center: center, radius: 10.0, identifier: "UserRegion")
                     monitoredRegion.notifyOnEntry = false
                     self.locationManager.startMonitoringForRegion(monitoredRegion)
                 } else {
-                    print("MONITORED REGION 2")
+                    print("LAUNCH MONITORED REGION 2")
                     let center = CLLocationCoordinate2D(latitude: (manager.location?.coordinate.latitude)!, longitude: (manager.location?.coordinate.longitude)!)
                     let monitoredRegion = CLCircularRegion(center: center, radius: 10.0, identifier: "UserRegion")
                     monitoredRegion.notifyOnEntry = false
@@ -281,22 +286,25 @@ class MapViewController: UIViewController, MKMapViewDelegate, CLLocationManagerD
     
     // The user did leave the specified region
     func locationManager(manager: CLLocationManager, didExitRegion region: CLRegion) {
-        //print("????????????EXITED REGION???????????????")
+        print("????????????EXITED REGION???????????????")
         
-        //print("Identifier: \(region.identifier)")
+        print("Identifier: \(region.identifier)")
         if manager.location?.speed <= 3.5 {
             self.updateLongAndLat(manager.location!, completion: { (lat, long) in
+                print("lat \(lat)")
+                print("long \(long)")
                 if lat != nil && long != nil {
+                    print("MONITORED REGION 1")
                     let center = CLLocationCoordinate2D(latitude: lat!, longitude: long!)
                     let monitoredRegion = CLCircularRegion(center: center, radius: 10.0, identifier: "UserRegion")
                     monitoredRegion.notifyOnEntry = false
                     self.locationManager.startMonitoringForRegion(monitoredRegion)
                 } else {
+                    print("MONITORED REGION 2")
                     let center = CLLocationCoordinate2D(latitude: (manager.location?.coordinate.latitude)!, longitude: (manager.location?.coordinate.longitude)!)
                     let monitoredRegion = CLCircularRegion(center: center, radius: 10.0, identifier: "UserRegion")
                     monitoredRegion.notifyOnEntry = false
                     self.locationManager.startMonitoringForRegion(monitoredRegion)
-                    
                 }
             })
         }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="OJg-zb-WfZ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="OJg-zb-WfZ">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Alignment constraints to the first baseline" minToolsVersion="6.0"/>
@@ -1008,11 +1008,11 @@
                             <rect key="frame" x="0.0" y="498" width="600" height="23"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="HotSpots Version 1.0.1" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VXf-Ng-wjl">
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="HotSpots Version 1.2" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VXf-Ng-wjl">
                                     <rect key="frame" x="120" y="2" width="160" height="21"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="160" id="SJA-yg-20S">
-                                            <variation key="widthClass=compact" constant="167"/>
+                                            <variation key="widthClass=compact" constant="157"/>
                                         </constraint>
                                     </constraints>
                                     <fontDescription key="fontDescription" type="system" weight="thin" pointSize="17"/>
@@ -1912,6 +1912,6 @@
         <image name="Location" width="22" height="22"/>
     </resources>
     <inferredMetricsTieBreakers>
-        <segue reference="PQV-hg-UhZ"/>
+        <segue reference="BWk-2A-IMb"/>
     </inferredMetricsTieBreakers>
 </document>
